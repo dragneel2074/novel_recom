@@ -1,0 +1,249 @@
+#replacing the ajax code with function-still clicking on novel title doesn't work
+
+Issues:
+#Solved: Load More works for recommend
+# when searched the name remains the default value
+# when random, the load more button doesn't disappear
+# solved: no loader
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Novel Recommender System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        .ui-autocomplete {
+            max-height: 250px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .jumbotron {
+            background: url('https://dragneelclub.com/wp-content/uploads/2023/05/Untitled-design-4.png') no-repeat;
+            background-size: cover;
+        }
+
+        .card-img-top {
+            max-width: 200px;
+            height: auto;
+            padding: 10px;
+        }
+
+        .btn {
+            transition: 0.5s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid blue;
+            border-bottom: 16px solid blue;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+</head>
+
+
+<body>
+    <div class="jumbotron text-center">
+        <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>📚 Novel Recommender System</strong></h1>
+    </div>
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="container">
+        <form method="POST">
+            <div class="form-group">
+                <label for="selected_novel_name">🔎 Choose a Novel to get Recommendations</label>
+                <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
+                    value="{{selected_novel_name|e}}">
+            </div>
+            <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
+            <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
+
+        </form>
+    </div>
+    <div class="container text-center">
+        <div class="loader" id="loader"></div>
+    </div>
+
+
+    {% if recommendations %}
+    <div class="container mt-4">
+        <h2>Here are some novels you might enjoy:</h2>
+        <div id="recommendations-row" class="row">
+            {% for novel in recommendations %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ novel.image_url }}" onerror="imgError(this);" alt="{{ novel.name }}"
+                        class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}"
+                                class="novel-name-link">{{ novel.name }}</a>
+                        </h5>
+                        <a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+    {% endif %}
+
+
+    <script>
+        $(function () {
+            $("#selected_novel_name").autocomplete({
+                source: '/autocomplete',
+                minLength: 2,
+                select: function (event, ui) {
+                    $("#selected_novel_name").val(ui.item.value);
+                }
+            });
+        });
+        document.getElementById("randomButton").onclick = function () {
+            //  document.getElementById("loadMoreButton").style.display = "none";
+            $('#loadMoreButton').hide();
+
+        }
+
+        function getRecommendation(action) {
+            var selectedNovelName = $('#selected_novel_name').val();
+            var url = action == 'action2' ? '/random' : '/recommend';
+            var type = 'POST';
+
+            $("#loader").show();
+
+            $.ajax({
+                url: url,
+                type: type,
+                data: { action: action, selected_novel_name: selectedNovelName },
+                success: function (response) {
+                    // Clear the recommendations container
+                    $('#recommendations-row').empty();
+
+                    if ('recommendations' in response) {
+                        // Populate the recommendations container
+                        for (var i = 0; i < response.recommendations.length; i++) {
+                            var novel = response.recommendations[i];
+                            var html = '<div class="col-md-4 mb-4">' +
+                                '<div class="card">' +
+                                '<img src="' + novel.image_url + '" onerror="imgError(this);" alt="' + novel.name + '" class="card-img-top">' +
+                                '<div class="card-body">' +
+                                '<h5 class="card-title"><a href="/?selected_novel_name=' + novel.name + '" class="novel-name-link">' + novel.name + '</a></h5>' +
+                                '<a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>' +
+                                '</div></div></div>';
+                            $('#recommendations-row').append(html);
+                        }
+                    } else {
+                        console.log("No recommendations in response");
+                    }
+
+                    $("#loader").hide();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // Log the error to the console
+                    console.error(
+                        "The following error occurred: " +
+                        textStatus, errorThrown
+                    );
+
+                    // Hide the loader
+                    $("#loader").hide();
+
+                    // Alert the user
+                    alert('Something went wrong, please try again');
+                }
+            });
+        }
+
+        $(document).on('click', '.novel-name-link', function (event) {
+            // Prevent the default link click action
+            event.preventDefault();
+
+            // Get the selected novel name from the link text
+            var selectedNovelName = $(this).text();
+
+            // Set the search box to the selected novel name
+            $('#selected_novel_name').val(selectedNovelName);
+
+            // Call getRecommendation function
+            getRecommendation('action1');
+        });
+
+        $(document).ready(function (event) {
+            event.preventDefault();
+            $(".submitBtn").click(function () {
+                var action = $(this).attr('name');
+                getRecommendation(action);
+            });
+        });
+
+
+
+        function imgError(image) {
+            image.onerror = "";
+            image.src = 'D:/projects/flask - Copy/data/images/no_image.png';
+            return true;
+        }
+
+    </script>
+
+    {% if amazon_products %}
+    <div class="container mt-4">
+        <h2>Check out these Amazon products:</h2>
+        <div class="row">
+            {% for product in amazon_products %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product["ItemInfo"]["Title"]["DisplayValue"] }}</h5>
+                        <center> <img src="{{ product['Images']['Primary']['Large']['URL'] | default('#') }}"
+                                alt="{{ product['ItemInfo']['Title']['DisplayValue'] | default('No Title') }}"
+                                class="card-img-top">
+                            <a href="{{ product['DetailPageURL'] | default('#') }}" class="btn btn-primary">Buy on
+                                Amazon</a>
+                        </center>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+</body>
+
+</html>

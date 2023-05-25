@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Novel Recommendations</title>
+</head>
+<body>
+    <h1>Here are some novels you might enjoy:</h1>
+    <ul>
+        {% for novel in recommendations %}
+            <li>
+                <a href="#">{{ novel }}</a>
+                <a href="https://your_website.com/review_page">📖 Read This Novel</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
