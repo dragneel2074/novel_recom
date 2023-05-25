@@ -66,8 +66,9 @@ def get_amazon_products(keyword):
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
-    selected_novel_name = 'Lord of the Mysteries'
     amazon_products = get_amazon_products('harem lit novels')
+    selected_novel_name = request.form.get('selected_novel_name') or request.args.get('selected_novel_name') or 'Mother of Learning'
+
     if request.method == 'POST':
         action = request.form.get('action1') or request.form.get('action2')
         selected_novel_name = request.form.get('selected_novel_name') if request.form.get('selected_novel_name') else 'Mother of Learning'
@@ -75,7 +76,6 @@ def home():
             recommendations = recommend(selected_novel_name)
             if recommendations is None:
         # Option 1: Show an error message to the user where novel is not found in database
-
                 flash("Novel not found in our database. Please try another one.")
             recommendation_names = [rec['name'] for rec in recommendations]
             recommendation_images = [rec['image_url'] for rec in recommendations]   
@@ -85,8 +85,8 @@ def home():
             recommendation_names = [rec['name'] for rec in recommendations]
             recommendation_images = [rec['image_url'] for rec in recommendations]  
             amazon_products = get_amazon_products('new light novels')
-        elif request.method == 'GET':
-            selected_novel_name = request.args.get('selected_novel_name')
+    elif request.method == 'GET':
+            # selected_novel_name = request.args.get('selected_novel_name')
             if selected_novel_name:
                 selected_novel_name = request.args.get('selected_novel_name') if request.args.get('selected_novel_name') else 'Mother of Learning'
                 recommendations = recommend(selected_novel_name)

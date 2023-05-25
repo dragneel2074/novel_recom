@@ -1,12 +1,3 @@
-#replacing the ajax code with function-still clicking on novel title doesn't work
-
-Issues:
-#Solved: Load More works for recommend
-# when searched the name remains the default value
-# when random, the load more button doesn't disappear
-# solved: no loader
-
-
 <!DOCTYPE html>
 <html>
 
@@ -138,83 +129,78 @@ Issues:
 
         }
 
-        function getRecommendation(action) {
-            var selectedNovelName = $('#selected_novel_name').val();
-            var url = action == 'action2' ? '/random' : '/recommend';
-            var type = 'POST';
+        $(document).ready(function () {
 
-            $("#loader").show();
-
-            $.ajax({
-                url: url,
-                type: type,
-                data: { action: action, selected_novel_name: selectedNovelName },
-                success: function (response) {
-                    // Clear the recommendations container
-                    $('#recommendations-row').empty();
-
-                    if ('recommendations' in response) {
-                        // Populate the recommendations container
-                        for (var i = 0; i < response.recommendations.length; i++) {
-                            var novel = response.recommendations[i];
-                            var html = '<div class="col-md-4 mb-4">' +
-                                '<div class="card">' +
-                                '<img src="' + novel.image_url + '" onerror="imgError(this);" alt="' + novel.name + '" class="card-img-top">' +
-                                '<div class="card-body">' +
-                                '<h5 class="card-title"><a href="/?selected_novel_name=' + novel.name + '" class="novel-name-link">' + novel.name + '</a></h5>' +
-                                '<a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>' +
-                                '</div></div></div>';
-                            $('#recommendations-row').append(html);
-                        }
-                    } else {
-                        console.log("No recommendations in response");
-                    }
-
-                    $("#loader").hide();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    // Log the error to the console
-                    console.error(
-                        "The following error occurred: " +
-                        textStatus, errorThrown
-                    );
-
-                    // Hide the loader
-                    $("#loader").hide();
-
-                    // Alert the user
-                    alert('Something went wrong, please try again');
-                }
-            });
-        }
-
-        $(document).on('click', '.novel-name-link', function (event) {
-            // Prevent the default link click action
-            event.preventDefault();
-
-            // Get the selected novel name from the link text
-            var selectedNovelName = $(this).text();
-
-            // Set the search box to the selected novel name
-            $('#selected_novel_name').val(selectedNovelName);
-
-            // Call getRecommendation function
-            getRecommendation('action1');
-        });
-
-        $(document).ready(function (event) {
-            event.preventDefault();
             $(".submitBtn").click(function () {
-                var action = $(this).attr('name');
-                getRecommendation(action);
-            });
-        });
 
+                var action = $(this).attr('name');
+                var selectedNovelName = $('#selected_novel_name').val();
+                var url = action == 'action2' ? '/random' : '/';
+                var type = 'POST'; // always use POST
+
+                $("#loader").show();
+
+                $.ajax({
+                    url: url,
+                    type: type,
+                    data: { action: action, selected_novel_name: selectedNovelName },
+                    success: function (response) {
+                        // Clear the recommendations container
+                        $('#recommendations-row').empty();
+                        $('#selected_novel_name').val(selectedNovelName);
+                        if ('recommendations' in response) {
+                            // Populate the recommendations container
+                            for (var i = 0; i < response.recommendations.length; i++) {
+                                var novel = response.recommendations[i];
+                                var html = '<div class="col-md-4 mb-4">' +
+                                    '<div class="card">' +
+                                    '<img src="' + novel.image_url + '" onerror="imgError(this);" alt="' + novel.name + '" class="card-img-top">' +
+                                    '<div class="card-body">' +
+                                    '<h5 class="card-title"><a href="/?selected_novel_name=' + novel.name + '">' + novel.name + '</a></h5>' +
+                                    '<a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>' +
+                                    '</div></div></div>';
+                                $('#recommendations-row').append(html);
+                            }
+
+                            $('.novel-name-link').on('click', function (event) {
+                                // Prevent the default link click action
+                                event.preventDefault();
+
+                                // Get the selected novel name from the link text
+                                var selectedNovelName = $(this).text();
+
+                                // Set the search box to the selected novel name
+                                $('#selected_novel_name').val(selectedNovelName);
+
+                                // Trigger the recommendation request
+                                $(".submitBtn").click();
+                            });
+                        } else {
+                            console.log("No recommendations in response");
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Log the error to the console
+                        console.error(
+                            "The following error occurred: " +
+                            textStatus, errorThrown
+                        );
+
+                        // Hide the loader
+                        $("#loader").hide();
+
+                        // Alert the user
+                        alert('Something went wrong, please try again');
+                    }
+                });
+            });
+
+        });
 
 
         function imgError(image) {
             image.onerror = "";
-            image.src = 'D:/projects/flask - Copy/data/images/no_image.png';
+            image.src = "/static/img/no-image.png";
             return true;
         }
 
