@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify, flash
+from flask import Flask, render_template, request, jsonify, flash, redirect,url_for
 import random
 import pandas as pd
 import numpy as np
@@ -10,6 +10,7 @@ import json
 import hashlib
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'
 
 # load the data
 novel_list = pickle.load(open('D:/projects/flask - Copy/data/novel_list.pkl', 'rb'))
@@ -67,7 +68,7 @@ def get_amazon_products(keyword):
 def home():
     recommendations = None
     amazon_products = get_amazon_products('harem lit novels')
-    selected_novel_name = request.form.get('selected_novel_name') or request.args.get('selected_novel_name') or 'Mother of Learning'
+    selected_novel_name = request.form.get('selected_novel_name') or request.args.get('selected_novel_name') or None
 
     if request.method == 'POST':
         action = request.form.get('action1') or request.form.get('action2')
@@ -77,6 +78,7 @@ def home():
             if recommendations is None:
         # Option 1: Show an error message to the user where novel is not found in database
                 flash("Novel not found in our database. Please try another one.")
+                return redirect(url_for('home'))
             recommendation_names = [rec['name'] for rec in recommendations]
             recommendation_images = [rec['image_url'] for rec in recommendations]   
             amazon_products = get_amazon_products(selected_novel_name)
