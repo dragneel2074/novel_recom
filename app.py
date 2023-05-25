@@ -14,6 +14,7 @@ app.secret_key = 'your_secret_key_here'
 
 # load the data
 novel_list = pickle.load(open('D:/projects/flask - Copy/data/novel_list.pkl', 'rb'))
+novel_list['english_publisher'] = novel_list['english_publisher'].fillna('unknown')
 print(novel_list.columns)
 name_list = novel_list['name'].values
 similarity = pickle.load(open('D:/projects/flask - Copy/data/similarity.pkl', 'rb'))
@@ -45,7 +46,7 @@ def recommend(novel, start=1, end=10):
     except IndexError:
         return None
 
-    recommend_novel = [{'name': novel_list.iloc[i[0]]['name'], 'image_url': novel_list.iloc[i[0]]['image_url']} for i in new_novel_list]
+    recommend_novel = [{'name': novel_list.iloc[i[0]]['name'], 'image_url': novel_list.iloc[i[0]]['image_url'],'english_publisher': novel_list.iloc[i[0]]['english_publisher']} for i in new_novel_list]
     return recommend_novel
 
 def get_amazon_products(keyword):
@@ -81,11 +82,14 @@ def home():
                 return redirect(url_for('home'))
             recommendation_names = [rec['name'] for rec in recommendations]
             recommendation_images = [rec['image_url'] for rec in recommendations]   
+            recommendation_pub = [rec['english_publisher'] for rec in recommendations]
+
             amazon_products = get_amazon_products(selected_novel_name)
         elif action == '🎲 Random':
-            recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0]} for novel in random.sample(list(name_list), 9)]
-            recommendation_names = [rec['name'] for rec in recommendations]
-            recommendation_images = [rec['image_url'] for rec in recommendations]  
+            recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
+            # recommendation_names = [rec['name'] for rec in recommendations]
+            # recommendation_images = [rec['image_url'] for rec in recommendations]  
+            # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
             amazon_products = get_amazon_products('new light novels')
     elif request.method == 'GET':
             # selected_novel_name = request.args.get('selected_novel_name')
@@ -94,7 +98,9 @@ def home():
                 recommendations = recommend(selected_novel_name)
                 if recommendations:
                     recommendation_names = [rec['name'] for rec in recommendations]
-                    recommendation_images = [rec['image_url'] for rec in recommendations]  
+                    recommendation_images = [rec['image_url'] for rec in recommendations]
+                    recommendation_pub = [rec['english_publisher'] for rec in recommendations]
+  
                 amazon_products = get_amazon_products(selected_novel_name)
   
     return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=amazon_products)
@@ -104,7 +110,7 @@ def home():
 def random_selection():
    if request.method == 'POST':
         random_novels = random.sample(list(name_list), 9)
-        return jsonify({'recommendations': [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0]} for novel in random_novels]})
+        return jsonify({'recommendations': [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random_novels]})
    
 
 @app.route('/autocomplete', methods=['GET'])

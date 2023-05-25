@@ -102,7 +102,19 @@
                         <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}"
                                 class="novel-name-link">{{ novel.name }}</a>
                         </h5>
-                        <a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>
+                        {% if novel.english_publisher and novel.english_publisher.lower() == "webnovel" %}
+                        <a href="https://www.webnovel.com/" target="_blank" class="btn btn-primary">📖 Read This
+                            Novel</a>
+                        {% elif novel.english_publisher.lower() == "dreame" %}
+                        <a href="https://www.dreame.com" target="_blank" class="btn btn-primary">Read the Novel</a>
+                        {% elif novel.english_publisher.lower() in ["seven seas","j-novel club", "tentai books","yen press"] %}
+                        <a href="https://www.amazon.com" target="_blank" class="btn btn-primary">Read the
+                            Novel</a>
+                        {% else %}
+                        <a href="https://www.google.com/search?q={{ novel.name }}" target="_blank"
+                            class="btn btn-primary">📖 Read This
+                            Novel</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -200,7 +212,7 @@
 
         function imgError(image) {
             image.onerror = "";
-            image.src = "/static/img/no-image.png";
+            image.src = "/static/images/no_image.png";
             return true;
         }
 
