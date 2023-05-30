@@ -96,6 +96,38 @@ def autocomplete():
 
 
 #chatGPT
+def chat(user_input):
+    url = 'https://api.pawan.krd/v1/chat/completions'
+    job = "You are NovelNavigator, an AI assistant. When given a novel's name, your task is to recommend 2 similar novels, such as Release that Witch and make Release that Witch linkable and present the titles as clickable HTML links. Link the titles to the website where they can be found.if the source is webnovel, link with https://tinyurl.com/webnovel10 url. If unsure of the source, link them to https://tinyurl.com/webnovel10. Your output should only consist of the clickable novel titles, nothing else. Ensure the titles and links fit within 100 tokens."
+
+    headers = {
+        'Authorization': 'Bearer pk-NslFMEokdTmDEAwoQDJVfLsZQPHRPxlcAFKSpyIJkkaFCFxm',
+        'Content-Type': 'application/json'
+    }
+    data = {
+        "model": "gpt-3.5-turbo",
+        "max_tokens": 100,
+        "messages": [
+            {
+                "role": "system",
+                "content": job
+            },
+            {
+                "role": "user",
+                "content": user_input
+            }
+        ]
+    }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    return response.json()
+
+@app.route('/novelmateai', methods=['POST'])
+def novelmateai():
+    selected_novel_name = request.form.get('selected_novel_name')
+    response = chat(selected_novel_name)
+    bot_output = response['choices'][0]['message']['content']
+    print(bot_output)
+    return jsonify({'message': bot_output})
 
 
 

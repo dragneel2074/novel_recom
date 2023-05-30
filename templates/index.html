@@ -161,6 +161,19 @@
             background: #ffffff;
             cursor: pointer;
         }
+
+
+
+
+        #novelmateaiResponse {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -190,12 +203,20 @@
             </div>
             <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
             <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
-            <input type="range" id="slider" name="slider" min="1" max="100" value="1">
 
+
+            <input type="range" id="slider" name="slider" min="1" max="100" value="1">
+            <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
+                id="novelmateaiButton">
         </form>
+
     </div>
     <div class="container text-center">
         <div class="loader" id="loader"></div>
+    </div>
+    <div id="novelmateaiResponse">
+        <p><b>NovelMate:</b> <span id="botOutput" class="novelmate-output"></span></p>
+
     </div>
 
 
@@ -253,6 +274,49 @@
         }
 
         $(document).ready(function () {
+
+
+            $("#novelmateaiButton").click(function (event) {
+                event.preventDefault();
+
+                var selectedNovelName = $('#selected_novel_name').val();
+                $.ajax({
+                    url: '/novelmateai',
+                    type: 'POST',
+                    dataType: 'json',  // Expect a JSON response
+
+                    data: { selected_novel_name: selectedNovelName },
+                    success: function (response) {
+                        $("#loader").show();
+                        // Display the response message
+                        var lines = response.message.split('\n');
+                        // Format the response message
+                        var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
+                        formattedMessage = formattedMessage.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+
+                        // Display the formatted message
+                        $('#botOutput').html(formattedMessage);
+                        //  $('#botOutput').html(response.message);
+                        $('#novelmateaiResponse').show();
+
+                        $("#loader").hide();  // Hide the loader after the response is displayed
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // Log the error to the console
+                        console.error(
+                            "The following error occurred: " +
+                            textStatus, errorThrown
+                        );
+                        $("#loader").hide();
+
+                        // Alert the user
+                        alert('Something went wrong, please try again');
+                    }
+                });
+            });
+
+
 
             $(".submitBtn").click(function () {
 
@@ -328,7 +392,7 @@
         }
 
     </script>
-<!-- 
+    <!-- 
     {% if amazon_products %}
     <div class="container mt-4">
         <h2>Check out these Amazon products:</h2>
