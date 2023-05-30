@@ -19,24 +19,6 @@ print(novel_list.columns)
 name_list = novel_list['name'].values
 similarity = pickle.load(open('D:/projects/flask - Copy/data/similarity.pkl', 'rb'))
 
-# AWS Configuration
-HOST = "webservices.amazon.com"
-URI_PATH = "/paapi5/searchitems"
-ACCESS_KEY = 'AKIAI2ZWF7R5J7D6P4LQ'
-SECRET_KEY = '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'
-REGION = "us-east-1"
-request_signer = AwsRequestSigner(REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
-
-def sign_aws_request(payload):
-    payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
-    headers = {
-        "host": HOST,
-        "content-type": "application/json; charset=UTF-8",
-        "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
-        "content-encoding": "amz-1.0"
-    }
-    headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
-    return headers
 
 def recommend(novel, slider_start):
     try:
@@ -48,22 +30,6 @@ def recommend(novel, slider_start):
 
     recommend_novel = [{'name': novel_list.iloc[i[0]]['name'], 'image_url': novel_list.iloc[i[0]]['image_url'],'english_publisher': novel_list.iloc[i[0]]['english_publisher']} for i in new_novel_list]
     return recommend_novel
-
-# def get_amazon_products(keyword):
-#     payload = {
-#         "Keywords": keyword,
-#         "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
-#         "PartnerTag": "dragneelclub-20",
-#         "PartnerType": "Associates",
-#         "Marketplace": "www.amazon.com"
-#     }
-    
-#     headers = sign_aws_request(payload)
-#     response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
-#     if response.status_code == 200:
-#         return response.json().get("SearchResult", {}).get("Items", None)
-#     else:
-#         return None
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -127,6 +93,47 @@ def autocomplete():
     search = request.args.get('term')
     results = [novel for novel in name_list if search.lower() in novel.lower()]
     return jsonify(results)
+
+
+#chatGPT
+
+
+
+
+# AWS Configuration
+# HOST = "webservices.amazon.com"
+# URI_PATH = "/paapi5/searchitems"
+# ACCESS_KEY = 'AKIAI2ZWF7R5J7D6P4LQ'
+# SECRET_KEY = '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'
+# REGION = "us-east-1"
+# request_signer = AwsRequestSigner(REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
+
+# def sign_aws_request(payload):
+#     payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
+#     headers = {
+#         "host": HOST,
+#         "content-type": "application/json; charset=UTF-8",
+#         "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
+#         "content-encoding": "amz-1.0"
+#     }
+#     headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
+#     return headers
+
+# def get_amazon_products(keyword):
+#     payload = {
+#         "Keywords": keyword,
+#         "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
+#         "PartnerTag": "dragneelclub-20",
+#         "PartnerType": "Associates",
+#         "Marketplace": "www.amazon.com"
+#     }
+    
+#     headers = sign_aws_request(payload)
+#     response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
+#     if response.status_code == 200:
+#         return response.json().get("SearchResult", {}).get("Items", None)
+#     else:
+#         return None
 
 
 if __name__ == '__main__':
