@@ -38,44 +38,48 @@ def sign_aws_request(payload):
     headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
     return headers
 
-def recommend(novel, start=1, end=10):
+def recommend(novel, slider_start):
     try:
         novel_index = novel_list[novel_list['name'] == novel].index[0]
         distances = similarity[novel_index]
-        new_novel_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[start:end]
+        new_novel_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[slider_start:slider_start+9]
     except IndexError:
         return None
 
     recommend_novel = [{'name': novel_list.iloc[i[0]]['name'], 'image_url': novel_list.iloc[i[0]]['image_url'],'english_publisher': novel_list.iloc[i[0]]['english_publisher']} for i in new_novel_list]
     return recommend_novel
 
-def get_amazon_products(keyword):
-    payload = {
-        "Keywords": keyword,
-        "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
-        "PartnerTag": "dragneelclub-20",
-        "PartnerType": "Associates",
-        "Marketplace": "www.amazon.com"
-    }
+# def get_amazon_products(keyword):
+#     payload = {
+#         "Keywords": keyword,
+#         "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
+#         "PartnerTag": "dragneelclub-20",
+#         "PartnerType": "Associates",
+#         "Marketplace": "www.amazon.com"
+#     }
     
-    headers = sign_aws_request(payload)
-    response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
-    if response.status_code == 200:
-        return response.json().get("SearchResult", {}).get("Items", None)
-    else:
-        return None
+#     headers = sign_aws_request(payload)
+#     response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
+#     if response.status_code == 200:
+#         return response.json().get("SearchResult", {}).get("Items", None)
+#     else:
+#         return None
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
-    amazon_products = get_amazon_products('harem lit novels')
+#    amazon_products = get_amazon_products('harem lit novels')
     selected_novel_name = request.form.get('selected_novel_name') or request.args.get('selected_novel_name') or None
-
+    slider_value = request.form.get('slider')
+    if slider_value is not None:
+        slider_value = int(slider_value)
+    else:
+        slider_value = 1  # Assign a default value of 1
     if request.method == 'POST':
         action = request.form.get('action1') or request.form.get('action2')
         selected_novel_name = request.form.get('selected_novel_name') if request.form.get('selected_novel_name') else 'Mother of Learning'
         if action == '💡 Recommend':
-            recommendations = recommend(selected_novel_name)
+            recommendations = recommend(selected_novel_name,slider_value)
             if recommendations is None:
         # Option 1: Show an error message to the user where novel is not found in database
                 flash("Novel not found in our database. Please try another one.")
@@ -84,26 +88,31 @@ def home():
             recommendation_images = [rec['image_url'] for rec in recommendations]   
             recommendation_pub = [rec['english_publisher'] for rec in recommendations]
 
-            amazon_products = get_amazon_products(selected_novel_name)
+ #           amazon_products = get_amazon_products(selected_novel_name)
         elif action == '🎲 Random':
             recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
             # recommendation_names = [rec['name'] for rec in recommendations]
             # recommendation_images = [rec['image_url'] for rec in recommendations]  
             # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
-            amazon_products = get_amazon_products('new light novels')
+  #          amazon_products = get_amazon_products('new light novels')
     elif request.method == 'GET':
             # selected_novel_name = request.args.get('selected_novel_name')
             if selected_novel_name:
                 selected_novel_name = request.args.get('selected_novel_name') if request.args.get('selected_novel_name') else 'Mother of Learning'
-                recommendations = recommend(selected_novel_name)
+            slider_value = request.form.get('slider')
+            if slider_value is not None:
+                slider_value = int(slider_value)
+            else:
+                slider_value = 1  # Assign a default value of 1
+                recommendations = recommend(selected_novel_name,slider_value)
                 if recommendations:
                     recommendation_names = [rec['name'] for rec in recommendations]
                     recommendation_images = [rec['image_url'] for rec in recommendations]
                     recommendation_pub = [rec['english_publisher'] for rec in recommendations]
   
-                amazon_products = get_amazon_products(selected_novel_name)
+   #             amazon_products = get_amazon_products(selected_novel_name)
   
-    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=amazon_products)
+    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=[])
 
 
 @app.route('/random', methods=['POST'])
