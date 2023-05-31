@@ -289,6 +289,15 @@
                     success: function (response) {
                         $("#loader").show();
                         // Display the response message
+                        if (response.hasOwnProperty('error')) {
+                            var message = "An Error Occured! Try sometime later"
+                            $('#botOutput').html(formattedMessage);
+                            //  $('#botOutput').html(response.message);
+                            $('#novelmateaiResponse').show();
+
+                            $("#loader").hide();
+                            return
+                        }
                         var lines = response.message.split('\n');
                         // Format the response message
                         var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
@@ -335,7 +344,9 @@
                         // Clear the recommendations container
                         $('#recommendations-row').empty();
                         $('#selected_novel_name').val(selectedNovelName);
-                        if ('recommendations' in response) {
+                        console.log('response is:')
+                        console.log(response)
+                        if (response.hasOwnProperty('recommendations')) {
                             // Populate the recommendations container
                             for (var i = 0; i < response.recommendations.length; i++) {
                                 var novel = response.recommendations[i];
