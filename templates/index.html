@@ -14,16 +14,12 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
-    <link rel="canonical" href="https://yourwebsite.com/">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+    <link rel="canonical" href="https://nobleradar.com/">
 
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta property="og:url" content="https://nobleradar.com/">
     <meta property="og:title" content="Novel Recommender System | Best Novel Suggestions Online">
     <meta property="og:description"
         content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
@@ -31,152 +27,20 @@
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://yourwebsite.com/">
+    <meta property="twitter:url" content="https://nobleradar.com/">
     <meta property="twitter:title" content="Novel Recommender System | Best Novel Suggestions Online">
     <meta property="twitter:description"
         content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
     <meta property="twitter:image" content="static/images/cover.png">
 
-
-    <style>
-        .ui-autocomplete {
-            max-height: 250px;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        /* .jumbotron {
-            background: url('https://dragneelclub.com/wp-content/uploads/2023/05/Untitled-design-4.png') no-repeat;
-            background-size: cover;
-        } */
-
-        .jumbotron {
-            background: url("{{ url_for('static', filename='images/cover.png') }}") no-repeat;
-            background-size: cover;
-        }
-
-        .card-img-top {
-            max-width: 75%;
-            height: auto;
-            padding: 10px;
-        }
-
-        .btn {
-            transition: 0.5s ease;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
-        }
-
-        .loader {
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid blue;
-            border-bottom: 16px solid blue;
-            width: 120px;
-            height: 120px;
-            animation: spin 2s linear infinite;
-            display: none;
-            margin: auto;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media only screen and (max-width: 600px) {
-            .jumbotron {
-                padding-top: 50px;
-                padding-bottom: 50px;
-            }
-
-            .container {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-
-            .form-group {
-                margin-bottom: 15px;
-            }
-        }
-
-        /* Styling for the slider track */
-        input[type="range"] {
-            -webkit-appearance: none;
-            /* Required for Chrome/Safari/Opera */
-            -moz-appearance: none;
-            /* Required for Firefox */
-            appearance: none;
-            /* Standard syntax */
-            width: 10%;
-            width: 10%;
-            /* Specific width is required for Firefox. */
-        }
-
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 5px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 1px 1px 1px #000000;
-            background: #ecf1f4;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
-
-        input[type="range"]::-moz-range-track {
-            width: 100%;
-            height: 5px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 1px 1px 1px #000000;
-            background: #232425;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
-
-        /* Styling for the thumb */
-        input[type="range"]::-webkit-slider-thumb {
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            background: #6110d3;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -5px;
-            /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-        }
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 
 
 
 
-        #novelmateaiResponse {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
 
 </head>
 
@@ -186,6 +50,27 @@
     <div class="jumbotron text-center">
         <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>📚 Novel Recommender System</strong></h1>
     </div>
+
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="nav-link" href="/">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/top-picks">Top Picks</a>
+                        <!-- <a href="{{ url_for('top_picks') }}">here</a> -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/image-generator">Image Generator</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
     <!-- Flash messages -->
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -194,6 +79,7 @@
     </div>
     {% endif %}
     {% endwith %}
+
     <div class="container">
         <form method="POST">
             <div class="form-group">
@@ -257,152 +143,6 @@
     {% endif %}
 
 
-    <script>
-        $(function () {
-            $("#selected_novel_name").autocomplete({
-                source: '/autocomplete',
-                minLength: 2,
-                select: function (event, ui) {
-                    $("#selected_novel_name").val(ui.item.value);
-                }
-            });
-        });
-        document.getElementById("randomButton").onclick = function () {
-            //  document.getElementById("loadMoreButton").style.display = "none";
-            $('#loadMoreButton').hide();
-
-        }
-
-        $(document).ready(function () {
-
-
-            $("#novelmateaiButton").click(function (event) {
-                event.preventDefault();
-
-                var selectedNovelName = $('#selected_novel_name').val();
-                $.ajax({
-                    url: '/novelmateai',
-                    type: 'POST',
-                    dataType: 'json',  // Expect a JSON response
-
-                    data: { selected_novel_name: selectedNovelName },
-                    success: function (response) {
-                        $("#loader").show();
-                        // Display the response message
-                        if (response.hasOwnProperty('error')) {
-                            var message = "An Error Occured! Try sometime later"
-                            $('#botOutput').html(formattedMessage);
-                            //  $('#botOutput').html(response.message);
-                            $('#novelmateaiResponse').show();
-
-                            $("#loader").hide();
-                            return
-                        }
-                        var lines = response.message.split('\n');
-                        // Format the response message
-                        var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
-                        formattedMessage = formattedMessage.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-
-                        // Display the formatted message
-                        $('#botOutput').html(formattedMessage);
-                        //  $('#botOutput').html(response.message);
-                        $('#novelmateaiResponse').show();
-
-                        $("#loader").hide();  // Hide the loader after the response is displayed
-
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        // Log the error to the console
-                        console.error(
-                            "The following error occurred: " +
-                            textStatus, errorThrown
-                        );
-                        $("#loader").hide();
-
-                        // Alert the user
-                        alert('Something went wrong, please try again');
-                    }
-                });
-            });
-
-
-
-            $(".submitBtn").click(function () {
-
-                var action = $(this).attr('name');
-                var selectedNovelName = $('#selected_novel_name').val();
-                var url = action == 'action2' ? '/random' : '/';
-                var type = 'POST'; // always use POST
-
-                $("#loader").show();
-
-                $.ajax({
-                    url: url,
-                    type: type,
-                    data: { action: action, selected_novel_name: selectedNovelName },
-                    success: function (response) {
-                        // Clear the recommendations container
-                        $('#recommendations-row').empty();
-                        $('#selected_novel_name').val(selectedNovelName);
-                        console.log('response is:')
-                        console.log(response)
-                        if (response.hasOwnProperty('recommendations')) {
-                            // Populate the recommendations container
-                            for (var i = 0; i < response.recommendations.length; i++) {
-                                var novel = response.recommendations[i];
-                                var html = '<div class="col-md-4 mb-4">' +
-                                    '<div class="card">' +
-                                    '<img src="' + novel.image_url + '" onerror="imgError(this);" alt="' + novel.name + '" class="card-img-top">' +
-                                    '<div class="card-body">' +
-                                    '<h5 class="card-title"><a href="/?selected_novel_name=' + novel.name + '">' + novel.name + '</a></h5>' +
-                                    '<a href="https://your_website.com/review_page" class="btn btn-primary">📖 Read This Novel</a>' +
-                                    '</div></div></div>';
-                                $('#recommendations-row').append(html);
-                            }
-
-                            $('.novel-name-link').on('click', function (event) {
-                                // Prevent the default link click action
-                                event.preventDefault();
-
-                                // Get the selected novel name from the link text
-                                var selectedNovelName = $(this).text();
-
-                                // Set the search box to the selected novel name
-                                $('#selected_novel_name').val(selectedNovelName);
-
-                                // Trigger the recommendation request
-                                $(".submitBtn").click();
-                            });
-                        } else {
-                            console.log("No recommendations in response");
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        // Log the error to the console
-                        console.error(
-                            "The following error occurred: " +
-                            textStatus, errorThrown
-                        );
-
-                        // Hide the loader
-                        $("#loader").hide();
-
-                        // Alert the user
-                        alert('Something went wrong, please try again');
-                    }
-                });
-            });
-
-        });
-
-
-        function imgError(image) {
-            image.onerror = "";
-            image.src = "/static/images/no_image.png";
-            return true;
-        }
-
-    </script>
     <!-- 
     {% if amazon_products %}
     <div class="container mt-4">
@@ -427,6 +167,13 @@
     </div>
     {% endif %} -->
 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 
 </body>
 

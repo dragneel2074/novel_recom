@@ -147,6 +147,10 @@ def novelmateai():
         return jsonify({'error': str(e)})
 
 
+@app.route('/top-picks')
+def top_picks():
+    return render_template("top-picks.html")
+
 # AWS Configuration
 # HOST = "webservices.amazon.com"
 # URI_PATH = "/paapi5/searchitems"

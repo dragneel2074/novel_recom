@@ -1,0 +1,180 @@
+.ui-autocomplete {
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* .jumbotron {
+    background: url('https://dragneelclub.com/wp-content/uploads/2023/05/Untitled-design-4.png') no-repeat;
+    background-size: cover;
+} */
+
+.jumbotron {
+    background: url("../images/cover.png") no-repeat;
+    background-size: cover;
+}
+
+.card-img-top {
+    max-width: 75%;
+    height: auto;
+    padding: 10px;
+}
+
+.btn {
+    transition: 0.5s ease;
+}
+
+.btn:hover {
+    transform: scale(1.1);
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid blue;
+    border-bottom: 16px solid blue;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    display: none;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .jumbotron {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+/* Styling for the slider track */
+input[type="range"] {
+    -webkit-appearance: none;
+    /* Required for Chrome/Safari/Opera */
+    -moz-appearance: none;
+    /* Required for Firefox */
+    appearance: none;
+    /* Standard syntax */
+    width: 10%;
+    width: 10%;
+    /* Specific width is required for Firefox. */
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 1px 1px 1px #000000;
+    background: #ecf1f4;
+    border-radius: 1.3px;
+    border: 0.2px solid #010101;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 1px 1px 1px #000000;
+    background: #232425;
+    border-radius: 1.3px;
+    border: 0.2px solid #010101;
+}
+
+/* Styling for the thumb */
+input[type="range"]::-webkit-slider-thumb {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background: #6110d3;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -5px;
+    /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+
+
+
+#novelmateaiResponse {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.navbar {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover,
+.navbar-nav .nav-link:hover {
+    color: #007BFF;
+}
+
+/* top picks */
+body {
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin-top: 30px;
+}
+
+.card {
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btn-link {
+    color: #333;
+    text-decoration: none;
+}
+
+.btn-link:hover,
+.btn-link:focus {
+    color: #333;
+    text-decoration: none;
+}
