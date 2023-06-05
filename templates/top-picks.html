@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Picks</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="static/images/logo/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="static/images/logo/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="static/images/logo/favicon-16x16.png">
     <link rel="canonical" href="https://nobleradar.com/top-picks">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
+
 </head>
 
 <body>
@@ -30,9 +32,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/top-picks">Top Picks</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/image-generator">Image Generator</a>
-                    </li>
+
                 </ul>
             </div>
         </nav>
@@ -412,7 +412,8 @@
                 <div class="card">
                     <div class="card-header" id="headingXIII">
                         <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXIII">
+                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                data-target="#collapseXIII">
                                 Best Comedy Web Novels
                             </button>
                         </h5>
@@ -441,7 +442,8 @@
                 <div class="card">
                     <div class="card-header" id="headingXIV">
                         <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXIV">
+                            <button class="btn btn-link" type="button" data-toggle="collapse"
+                                data-target="#collapseXIV">
                                 Best FanFics Web Novels
                             </button>
                         </h5>
@@ -449,18 +451,18 @@
                     <div id="collapseXIV" class="collapse" data-parent="#accordion">
                         <div class="card-body">
                             <ul>
-                                <li>Emperor's Domination</li>
-                                <li>Low Dimensional Game</li>
-                                <li>Overlord</li>
-                                <li>To be Power in The Shadows</li>
-                                <li>The Daily Life of the Immortal King</li>
-                                <li>Tensei Shitara Slime Datta Ken</li>
-                                <li>Overgeared</li>
-                                <li>Beware of Chicken</li>
-                                <li>Main Character Hides His Strength</li>
-                                <li>Legend of the Archmagus</li>
-                                <li>Kidnapped Dragons</li>
-                                <li>Battle Mage Farmer</li>
+                                <li>Dark Matter by mysterycyclone(MCU x DC)</li>
+                                <li>Endless Path : Infinite Cosmos(Danmachi)</li>
+                                <li>A Crooked Man - In A Crooked House(M)</li>
+                                <li>HP: The Arcane Thief</li>
+                                <li>The Dark Wolf Shiro's Series</li>
+                                <li>His Best Girl by iluvaqt(M x DC)</li>
+                                <li>Too Bad. We Drinking Lemonade Today. by Meeceisme(Naruto)</li>
+                                <li>The Divine Hunter(Witcher 3)</li>
+                                <li>The Strongest Legend of Dragon Ball</li>
+                                <li>Dragonborn Saga(Skyrim)</li>
+                                <li>Anomaly(Highschool DxD)</li>
+                                <li>Highschool DxD A Minor Tale</li>
                             </ul>
                         </div>
                     </div>
@@ -482,14 +484,14 @@
                                 <li>Hokage Master(Naruto)</li>
                                 <li>100 Wives of Naruto</li>
                                 <li>Wonder Woman: Twisted Dominion</li>
-                                <li>Birds of Prey: Twisted Desire</li>
-                                <li>Tensei Shitara Slime Datta Ken</li>
-                                <li>Overgeared</li>
-                                <li>Beware of Chicken</li>
-                                <li>Main Character Hides His Strength</li>
-                                <li>Legend of the Archmagus</li>
-                                <li>Kidnapped Dragons</li>
-                                <li>Battle Mage Farmer</li>
+                                <li>Birds of Prey: Twisted Desire(DC)</li>
+                                <li>Two Valentines(HP)</li>
+                                <li>Harry Potter and Hermione Granger's S.e.x.u.a.l Secrets</li>
+                                <li>Uravity's HeroCon (MHA)</li>
+                                <li>In-A-Gadda-Da-Vida by idleside(MHA)</li>
+                                <li>Queens Of Darkness, Ladies Of Light(HP)</li>
+                                <li>VulgarAssassin's series(Naruto, HP)</li>
+                                <li>Accretion by RC_McLachlan(Thor)</li>
                             </ul>
                         </div>
                     </div>
@@ -498,9 +500,14 @@
 
         </div>
     </div>
-
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
+    <!-- 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script> -->
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
     <script>
         $(document).ready(function () {
             $('.btn-link').on('click', function () {

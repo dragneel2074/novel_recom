@@ -156,6 +156,7 @@ $(document).ready(function () {
 });
 
 // top picks
+
 // $(document).ready(function () {
 //     $('.btn-link').on('click', function () {
 //         var current = $(this).attr('data-target');

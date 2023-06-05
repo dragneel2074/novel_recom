@@ -33,14 +33,10 @@
         content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
     <meta property="twitter:image" content="static/images/cover.png">
 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-
-
-
-
-
-
-
 
 </head>
 
@@ -64,9 +60,7 @@
                         <a class="nav-link" href="/top-picks">Top Picks</a>
                         <!-- <a href="{{ url_for('top_picks') }}">here</a> -->
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/image-generator">Image Generator</a>
-                    </li>
+
                 </ul>
             </div>
         </nav>
@@ -87,11 +81,12 @@
                 <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
                     value="{{selected_novel_name|e}}" placeholder="Enter novel name here">
             </div>
+            <input type="range" id="slider" name="slider" min="1" max="100" value="1">
+
             <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
             <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
 
 
-            <input type="range" id="slider" name="slider" min="1" max="100" value="1">
             <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
                 id="novelmateaiButton">
         </form>
@@ -167,16 +162,15 @@
     </div>
     {% endif %} -->
 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery-ui.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-    
+
 </body>
 
 </html>
