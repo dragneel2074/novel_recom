@@ -40,6 +40,10 @@ $(document).ready(function () {
                     $("#loader").hide();
                     return
                 }
+                var urlMap = {
+                    'webnovel.com': 'https://nobleradar.com/go/webnovel',
+                    'amazon.com': 'https://nobleradar.com/go/amazon'
+                  };
                 var lines = response.message.split('\n');
                 // Format the response message
                 var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
@@ -67,6 +71,40 @@ $(document).ready(function () {
         });
     });
 
+    $("#imagegenButton").click(function (event) {
+        event.preventDefault();
+    
+        var selectedNovelName = $('#selected_novel_name').val();
+        $.ajax({
+            url: '/ai-anime-image-generator',
+            type: 'POST',
+            dataType: 'json', // Expect a JSON response
+            data: { selected_novel_name: selectedNovelName },
+            success: function (response) {
+                $("#loader").show();
+                var img = $('<img id="generatedImage">');
+
+                // Set the src attribute of the img tag to the URL of the generated image
+                img.attr('src', response.image_url);
+    
+                // Append the img tag to the container
+                $('#imageContainer').html(img);
+                // Set the src attribute of the img tag to the URL of the generated image
+             //   $('#generatedImage').attr('src', response.image_url);
+              
+                $("#loader").hide();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#loader").hide();
+                // Log the error to the console
+                console.error(
+                    "The following error occurred: " +
+                    textStatus, errorThrown
+                );
+            }
+        });
+    });
+    
 
 
     $(".submitBtn").click(function () {

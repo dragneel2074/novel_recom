@@ -190,3 +190,16 @@ body {
     color: #333;
     text-decoration: none;
 }
+
+#generatedImage {
+   
+    width: 50%;
+    height: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px grey;
+}

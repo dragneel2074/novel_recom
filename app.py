@@ -8,6 +8,9 @@ from aws_request_signer import AwsRequestSigner
 import requests
 import json
 import hashlib
+from imaginepy import Imagine, Style, Ratio
+import uuid
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -147,6 +150,43 @@ def novelmateai():
         return jsonify({'error': str(e)})
 
 
+@app.route('/ai-anime-image-generator', methods=['POST'])
+def main():
+    # Generate a UUID
+    image_id = uuid.uuid4()
+
+# Convert the UUID to a string and use it in the filename
+    image_filename = f"static/images/{image_id}.jpeg"
+    imagine = Imagine()
+
+    img_data = imagine.sdprem(
+        prompt=request.form.get('selected_novel_name'),
+
+        style=Style.COMIC_V2,
+        ratio=Ratio.RATIO_16X9
+    )
+
+    if img_data is None:
+        print("An error occurred while generating the image.")
+        return jsonify(error="An error occurred while generating the image.")
+
+    img_data = imagine.upscale(image=img_data)
+
+    if img_data is None:
+        print("An error occurred while upscaling the image.")
+        return jsonify(error="An error occurred while upscaling the image.")
+
+    try:
+        with open(image_filename, mode="wb") as img_file:
+            img_file.write(img_data)
+    except Exception as e:
+        print(f"An error occurred while writing the image to file: {e}")
+        return jsonify(error=f"An error occurred while writing the image to file: {e}")
+
+     # Return a JSON response with the image URL
+    return jsonify(image_url=f"/{image_filename}")
+
+
 @app.route('/top-picks')
 def top_picks():
     return render_template("top-picks.html")
@@ -178,6 +218,7 @@ def top_picks():
 #         "PartnerType": "Associates",
 #         "Marketplace": "www.amazon.com"
 #     }
+
 
 #     headers = sign_aws_request(payload)
 #     response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
