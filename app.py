@@ -70,12 +70,12 @@ def home():
         else:
             slider_value = 1  # Assign a default value of 1
             recommendations = recommend(selected_novel_name, slider_value)
-            if recommendations:
-                recommendation_names = [rec['name'] for rec in recommendations]
-                recommendation_images = [rec['image_url']
-                                         for rec in recommendations]
-                recommendation_pub = [rec['english_publisher']
-                                      for rec in recommendations]
+            # if recommendations:
+            #     recommendation_names = [rec['name'] for rec in recommendations]
+            #     recommendation_images = [rec['image_url']
+            #                              for rec in recommendations]
+            #     recommendation_pub = [rec['english_publisher']
+            #                           for rec in recommendations]
 
    #             amazon_products = get_amazon_products(selected_novel_name)
 
@@ -156,13 +156,13 @@ def main():
     image_id = uuid.uuid4()
 
 # Convert the UUID to a string and use it in the filename
-    image_filename = f"static/images/{image_id}.jpeg"
+    image_filename = f"static/images/generated/{image_id}.jpeg"
     imagine = Imagine()
 
     img_data = imagine.sdprem(
         prompt=request.form.get('selected_novel_name'),
 
-        style=Style.COMIC_V2,
+        style=Style.IMAGINE_V4_Beta,
         ratio=Ratio.RATIO_16X9
     )
 
