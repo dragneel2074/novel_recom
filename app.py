@@ -10,10 +10,14 @@ import json
 import hashlib
 from imaginepy import Imagine, Style, Ratio
 import uuid
+from flask_sitemapper import Sitemapper
+import time
 
+sitemapper = Sitemapper()
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
+sitemapper.init_app(app)
 
 # load the data
 novel_list = pickle.load(
@@ -26,10 +30,11 @@ similarity = pickle.load(
     open('D:/projects/flask - Copy/data/similarity.pkl', 'rb'))
 
 
+@sitemapper.include(lastmod="2023-06-10")
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
-#    amazon_products = get_amazon_products('harem lit novels')
+    amazon_products = get_amazon_products('harem lit novels')
     selected_novel_name = request.form.get(
         'selected_novel_name') or request.args.get('selected_novel_name') or None
     slider_value = request.form.get('slider')
@@ -51,14 +56,14 @@ def home():
            # recommendation_images = [rec['image_url'] for rec in recommendations]
            # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
 
- #           amazon_products = get_amazon_products(selected_novel_name)
+            amazon_products = get_amazon_products(selected_novel_name)
         elif action == '🎲 Random':
             recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],
                                 'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
             # recommendation_names = [rec['name'] for rec in recommendations]
             # recommendation_images = [rec['image_url'] for rec in recommendations]
             # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
-  #          amazon_products = get_amazon_products('new light novels')
+            amazon_products = get_amazon_products('new light novels')
     elif request.method == 'GET':
         # selected_novel_name = request.args.get('selected_novel_name')
         if selected_novel_name:
@@ -77,9 +82,9 @@ def home():
             #     recommendation_pub = [rec['english_publisher']
             #                           for rec in recommendations]
 
-   #             amazon_products = get_amazon_products(selected_novel_name)
+            amazon_products = get_amazon_products(selected_novel_name)
 
-    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=[])
+    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=amazon_products)
 
 
 def recommend(novel, slider_start):
@@ -96,6 +101,7 @@ def recommend(novel, slider_start):
     return recommend_novel
 
 
+@sitemapper.include(lastmod="2023-06-10")
 @app.route('/random', methods=['POST'])
 def random_selection():
     if request.method == 'POST':
@@ -103,6 +109,7 @@ def random_selection():
         return jsonify({'recommendations': [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0], 'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random_novels]})
 
 
+@sitemapper.include(lastmod="2023-06-10")
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     search = request.args.get('term')
@@ -187,44 +194,52 @@ def main():
     return jsonify(image_url=f"/{image_filename}")
 
 
+@sitemapper.include(lastmod="2023-06-10")
 @app.route('/top-picks')
 def top_picks():
     return render_template("top-picks.html")
 
-# AWS Configuration
-# HOST = "webservices.amazon.com"
-# URI_PATH = "/paapi5/searchitems"
-# ACCESS_KEY = 'AKIAI2ZWF7R5J7D6P4LQ'
-# SECRET_KEY = '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'
-# REGION = "us-east-1"
-# request_signer = AwsRequestSigner(REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
 
-# def sign_aws_request(payload):
-#     payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
-#     headers = {
-#         "host": HOST,
-#         "content-type": "application/json; charset=UTF-8",
-#         "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
-#         "content-encoding": "amz-1.0"
-#     }
-#     headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
-#     return headers
-
-# def get_amazon_products(keyword):
-#     payload = {
-#         "Keywords": keyword,
-#         "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
-#         "PartnerTag": "dragneelclub-20",
-#         "PartnerType": "Associates",
-#         "Marketplace": "www.amazon.com"
-#     }
+@app.route('/sitemap.xml')
+def sitemap():
+    return sitemapper.generate()
 
 
-#     headers = sign_aws_request(payload)
-#     response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload)
-#     if response.status_code == 200:
-#         return response.json().get("SearchResult", {}).get("Items", None)
-#     else:
-#         return None
+#AWS Configuration
+HOST = "webservices.amazon.com"
+URI_PATH = "/paapi5/searchitems"
+ACCESS_KEY = ''
+SECRET_KEY =  ''
+REGION = "us-east-1"
+request_signer = AwsRequestSigner(REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
+
+def sign_aws_request(payload):
+    payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
+    headers = {
+        "host": HOST,
+        "content-type": "application/json; charset=UTF-8",
+        "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
+        "content-encoding": "amz-1.0"
+    }
+    headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
+    return headers
+
+def get_amazon_products(keyword):
+    payload = {
+        "Keywords": keyword,
+        "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
+        "PartnerTag": "dragneelclub-20",
+        "PartnerType": "Associates",
+        "Marketplace": "www.amazon.com"
+    }
+
+    headers = sign_aws_request(payload)
+
+    response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload, verify=False)
+    time.sleep(0.1)
+    if response.status_code == 200:
+        return response.json().get("SearchResult", {}).get("Items", None)
+    else:
+        return None
 if __name__ == '__main__':
     app.run(debug=True)
