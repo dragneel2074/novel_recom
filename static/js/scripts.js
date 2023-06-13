@@ -193,6 +193,13 @@ $(document).ready(function () {
     });
 });
 
+window.onload = function() {
+    document.getElementById('quizSubmit').onclick = function() {
+        alert('Your answers have been submitted!');
+    };
+};
+
+
 // top picks
 
 // $(document).ready(function () {

@@ -1,3 +1,6 @@
+from main import app
+import contact
+import quiz
 import os
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
 import random
@@ -13,9 +16,10 @@ import uuid
 from flask_sitemapper import Sitemapper
 import time
 
+
 sitemapper = Sitemapper()
 
-app = Flask(__name__)
+#app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 sitemapper.init_app(app)
 
@@ -34,7 +38,7 @@ similarity = pickle.load(
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
-    amazon_products = get_amazon_products('harem lit novels')
+    amazon_products = None
     selected_novel_name = request.form.get(
         'selected_novel_name') or request.args.get('selected_novel_name') or None
     slider_value = request.form.get('slider')
