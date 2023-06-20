@@ -1,188 +1,113 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Novel Radar | Get Best Novel Suggestions </title>
-    <meta name="description"
-        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
-    <meta name="keywords"
-        content="Novel,webnovel, web novel, light novels, Recommender, System, Books, Literature, Reading, Online, Suggestions">
-    <link rel="apple-touch-icon" sizes="180x180" href="static/images/logo/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/images/logo/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/images/logo/favicon-16x16.png">
-    <!-- <link rel="manifest" href="/site.webmanifest"> -->
+{% block title %}
+Get your top picks here
+{% endblock %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8">
-    <link rel="canonical" href="https://nobleradar.com/">
+{% block title1 %}
+📚 Novel Recommender System
+{% endblock %}
 
+{% block content %}
+<!-- Flash messages -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="alert alert-warning">
+    {{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nobleradar.com/">
-    <meta property="og:title" content="Novel Recommender System | Best Novel Suggestions Online">
-    <meta property="og:description"
-        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
-    <meta property="og:image" content="static/images/cover.png">
+<div class="container">
+    <form method="POST">
+        <div class="form-group">
+            <label for="selected_novel_name">🔎 Choose a Novel to get Recommendations</label>
+            <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
+                value="{{selected_novel_name|e}}" placeholder="Enter novel name here">
+        </div>
+        <input type="range" id="slider" name="slider" min="1" max="100" value="1">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://nobleradar.com/">
-    <meta property="twitter:title" content="Novel Recommender System | Best Novel Suggestions Online">
-    <meta property="twitter:description"
-        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
-    <meta property="twitter:image" content="static/images/cover.png">
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-
-</head>
+        <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
+        <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
 
 
-<body>
+        <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
+            id="novelmateaiButton">
+        <input type="button" name="action4" value="Generate Image" class="btn btn-secondary submitBtn"
+            id="imagegenButton">
+    </form>
 
-    <div class="jumbotron text-center">
-        <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>📚 Novel Recommender System</strong></h1>
-    </div>
+</div>
+<div class="container text-center">
+    <div class="loader" id="loader"></div>
+</div>
+<div id="novelmateaiResponse">
+    <p><b>NovelMate:</b> <span id="botOutput" class="novelmate-output"></span></p>
 
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="nav-link" href="/">Home</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/top-picks">Top Picks</a>
-                        <!-- <a href="{{ url_for('top_picks') }}">here</a> -->
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact Us</a>
+</div>
 
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/quiz_select">Quiz</a>
-
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert alert-warning">
-        {{ messages[0] }}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    <div class="container">
-        <form method="POST">
-            <div class="form-group">
-                <label for="selected_novel_name">🔎 Choose a Novel to get Recommendations</label>
-                <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
-                    value="{{selected_novel_name|e}}" placeholder="Enter novel name here">
-            </div>
-            <input type="range" id="slider" name="slider" min="1" max="100" value="1">
-
-            <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
-            <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
-
-
-            <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
-                id="novelmateaiButton">
-            <input type="button" name="action4" value="Generate Image" class="btn btn-secondary submitBtn"
-                id="imagegenButton">
-        </form>
-
-    </div>
-    <div class="container text-center">
-        <div class="loader" id="loader"></div>
-    </div>
-    <div id="novelmateaiResponse">
-        <p><b>NovelMate:</b> <span id="botOutput" class="novelmate-output"></span></p>
-
-    </div>
-
-    <div id="imageContainer"></div>
+<div id="imageContainer"></div>
 
 
 
-    {% if recommendations %}
-    <div class="container mt-4">
-        <h2>Here are some novels you might enjoy:</h2>
-        <div id="recommendations-row" class="row">
-            {% for novel in recommendations %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="{{ novel.image_url }}" onerror="imgError(this);" alt="{{ novel.name }}"
-                        class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}"
-                                class="novel-name-link">{{ novel.name }}</a>
-                        </h5>
-                        {% if novel.english_publisher and novel.english_publisher.lower() == "webnovel" %}
-                        <a href="https://www.webnovel.com/" target="_blank" class="btn btn-primary">📖 Read This
-                            Novel</a>
-                        {% elif novel.english_publisher.lower() == "dreame" %}
-                        <a href="https://www.dreame.com" target="_blank" class="btn btn-primary">Read the Novel</a>
-                        {% elif novel.english_publisher.lower() in ["seven seas","j-novel club", "tentai books","yen
-                        press"] %}
-                        <a href="https://www.amazon.com" target="_blank" class="btn btn-primary">Read the
-                            Novel</a>
-                        {% else %}
-                        <a href="https://www.google.com/search?q={{ novel.name }}" target="_blank"
-                            class="btn btn-primary">📖 Read This
-                            Novel</a>
-                        {% endif %}
-                    </div>
+{% if recommendations %}
+<div class="container mt-4">
+    <h2>Here are some novels you might enjoy:</h2>
+    <div id="recommendations-row" class="row">
+        {% for novel in recommendations %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ novel.image_url }}" onerror="imgError(this);" alt="{{ novel.name }}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}" class="novel-name-link">{{
+                            novel.name }}</a>
+                    </h5>
+                    {% if novel.english_publisher and novel.english_publisher.lower() == "webnovel" %}
+                    <a href="https://www.webnovel.com/" target="_blank" class="btn btn-primary">📖 Read This
+                        Novel</a>
+                    {% elif novel.english_publisher.lower() == "dreame" %}
+                    <a href="https://www.dreame.com" target="_blank" class="btn btn-primary">Read the Novel</a>
+                    {% elif novel.english_publisher.lower() in ["seven seas","j-novel club", "tentai books","yen
+                    press"] %}
+                    <a href="https://www.amazon.com" target="_blank" class="btn btn-primary">Read the
+                        Novel</a>
+                    {% else %}
+                    <a href="https://www.google.com/search?q={{ novel.name }}" target="_blank"
+                        class="btn btn-primary">📖 Read This
+                        Novel</a>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
         </div>
-
+        {% endfor %}
     </div>
-    {% endif %}
+
+</div>
+{% endif %}
 
 
 
-    {% if amazon_products %}
-    <div class="container mt-4">
-        <h2>Check out these Amazon products:</h2>
-        <div class="row">
-            {% for product in amazon_products %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product["ItemInfo"]["Title"]["DisplayValue"] }}</h5>
-                        <center> <img src="{{ product['Images']['Primary']['Large']['URL'] | default('#') }}"
-                                alt="{{ product['ItemInfo']['Title']['DisplayValue'] | default('No Title') }}"
-                                class="card-img-top">
-                            <a href="{{ product['DetailPageURL'] | default('#') }}" class="btn btn-primary">Buy on
-                                Amazon</a>
-                        </center>
-                    </div>
+{% if amazon_products %}
+<div class="container mt-4">
+    <h2>Check out these Amazon products:</h2>
+    <div class="row">
+        {% for product in amazon_products %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product["ItemInfo"]["Title"]["DisplayValue"] }}</h5>
+                    <center> <img src="{{ product['Images']['Primary']['Large']['URL'] | default('#') }}"
+                            alt="{{ product['ItemInfo']['Title']['DisplayValue'] | default('No Title') }}"
+                            class="card-img-top">
+                        <a href="{{ product['DetailPageURL'] | default('#') }}" class="btn btn-primary">Buy on
+                            Amazon</a>
+                    </center>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
-
-    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='js/jquery-ui.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}

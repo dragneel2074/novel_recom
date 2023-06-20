@@ -1,86 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Novel Quizs</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="static/images/logo/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/images/logo/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/images/logo/favicon-16x16.png">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-</head>
+{% block title %}
+Let's Play Web Novel Quiz
+{% endblock %}
 
-<body>
-    
-        <div class="jumbotron text-center">
-            <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>Web Novel Quizs</strong></h1>
-        </div>
-        <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="nav-link" href="/">Home</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/top-picks">Top Picks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/contact">Contact Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/quiz_select">Quiz</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <!-- Quiz form -->
-                    <form action="/submit-quiz/{{ quiz_name }}" method="post">
-                        <div class="mb-4">
-                            {% for question in questions %}
-                            <p class="font-weight-bold">{{ question.question }}</p>
-                            {% for option in question.options %}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="{{ question.question }}"
-                                    id="{{ question.question }}_{{ loop.index }}" value="{{ option }}">
-                                <label class="form-check-label" for="{{ question.question }}_{{ loop.index }}">{{ option }}</label>
-                            </div>
-                            {% endfor %}
-                            {% endfor %}
-                        </div>
-                        <div class="form-group">
-                            <label for="name">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                        {% endfor %}
-                        {% endwith %}
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
-               
-            </div>
-        </div>
-    
-    
-</body>
+{% block title1 %}
+Let's Start Playing Quiz
+{% endblock %}
 
-</html>
+{% block content %}
+<div class="container mt-5">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }} mt-3">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endwith %}
+
+  <!-- Quiz form -->
+  <div class="quiz-container">
+    <form action="/submit-quiz/{{ quiz_name }}" method="post">
+      <div class="mb-4">
+        {% for question in questions %}
+        <p class="font-weight-bold mb-2">{{ question.question }}</p>
+        {% for option in question.options %}
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="radio" name="{{ question.question }}"
+            id="{{ question.question }}_{{ loop.index }}" value="{{ option }}">
+          <label class="form-check-label" for="{{ question.question }}_{{ loop.index }}">{{ option }}</label>
+        </div>
+        {% endfor %}
+        {% endfor %}
+      </div>
+      <div class="form-group mb-3">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="form-group mb-3">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+      </div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} mt-3">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endwith %}
+      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+
+  </div>
+
+
+</div>
+{% endblock %}

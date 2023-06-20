@@ -5,8 +5,8 @@ from aws_request_signer import AwsRequestSigner
 
 HOST = "webservices.amazon.com"
 URI_PATH = "/paapi5/searchitems"
-ACCESS_KEY = "AKIAI2ZWF7R5J7D6P4LQ"
-SECRET_KEY = "CbK2g67xoP5K+GqUeitV51vH9g7iiXCe5CS6PMdl"  # replace with your secret key
+ACCESS_KEY = ""
+SECRET_KEY = "CbK2g67xoP5K+"  # replace with your secret key
 REGION = "us-east-1"
 
 request_payload = {

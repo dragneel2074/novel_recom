@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}Default Title{% endblock %}</title>
+    <meta name="description"
+        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
+    <meta name="keywords"
+        content="Novel,webnovel, web novel, light novels, Recommender, System, Books, Literature, Reading, Online, Suggestions">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/logo/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/logo/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/logo/favicon-16x16.png">
+    <!-- <link rel="manifest" href="/site.webmanifest"> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://nobleradar.com/">
+
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nobleradar.com/">
+    <meta property="og:title" content="Novel Recommender System | Best Novel Suggestions Online">
+    <meta property="og:description"
+        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
+    <meta property="og:image" content="static/images/cover.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://nobleradar.com/">
+    <meta property="twitter:title" content="Novel Recommender System | Best Novel Suggestions Online">
+    <meta property="twitter:description"
+        content="Discover your next favorite novel with our advanced Novel Recommender System. Get personalized novel suggestions based on your preferences.">
+    <meta property="twitter:image" content="static/images/cover.png">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-ui.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+
+<body>
+    <div class="jumbotron text-center">
+        <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>{% block title1 %}Default Title {% endblock %}</strong></h1>
+    </div>
+
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="nav-link" href="/">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/top-picks">Top Picks</a>
+                        <!-- <a href="{{ url_for('top_picks') }}">here</a> -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact Us</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/quiz_select">Quiz</a>
+
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+
+    {% block content %}
+    <!-- This is where child templates will insert their unique content -->
+    {% endblock %}
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery-ui.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+
+</body>
+
+</html>

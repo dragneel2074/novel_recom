@@ -1,521 +1,477 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Picks</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="static/images/logo/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/images/logo/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/images/logo/favicon-16x16.png">
-    <link rel="canonical" href="https://nobleradar.com/top-picks">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% block title %}
+Get your top picks here
+{% endblock %}
+{% block title1 %}
+Top Web Novel Picks
+{% endblock %}
 
 
-</head>
+{% block content %}
 
-<body>
-    <div class="jumbotron text-center">
-        <h1 class="my-4 animate__animated animate__bounceInLeft"><strong>📚 Top Picks</strong></h1>
-    </div>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="nav-link" href="/">Home</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/top-picks">Top Picks</a>
-                    </li>
-
-                </ul>
-            </div>
-        </nav>
-    </div>
-
-    <div class="container">
-        <div class="row" id="accordion">
-            <!-- Card 1 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseOne">
-                                Best Web Novels(Original)
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseOne" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>The Wandering Inn</li>
-                                <li>Mother of Learning</li>
-                                <li>Worm</li>
-                                <li>Shadow Slave</li>
-                                <li>The Gods Are Bastards</li>
-                                <li>The Perfect Run</li>
-                                <li>Azarinth Healer</li>
-                                <li>The Zombie Knight </li>
-                                <li>Beware of Chicken</li>
-                                <li>Cradle</li>
-                                <li>Forge of Destiny</li>
-                                <li>Practical Guide to Evil</li>
-                            </ul>
-                        </div>
+<div class="container">
+    <div class="row" id="accordion">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne">
+                            Best Web Novels(Original)
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseOne" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>The Wandering Inn</li>
+                            <li>Mother of Learning</li>
+                            <li>Worm</li>
+                            <li>Shadow Slave</li>
+                            <li>The Gods Are Bastards</li>
+                            <li>The Perfect Run</li>
+                            <li>Azarinth Healer</li>
+                            <li>The Zombie Knight </li>
+                            <li>Beware of Chicken</li>
+                            <li>Cradle</li>
+                            <li>Forge of Destiny</li>
+                            <li>Practical Guide to Evil</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <!-- Card 2 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingTwo">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseTwo">
-                                Best Web Novels (CN Translated)
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseTwo" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Lord of The Mysteries</li>
-                                <li>Reverend Insanity</li>
-                                <li>The Grand Master Strategist</li>
-                                <li>I Shall Seal The Heavens</li>
-                                <li>Cultivation Chat Group</li>
-                                <li>The Legendary Mechanic</li>
-                                <li>Warlock of The Magus World</li>
-                                <li>Throne of Magical Arcana </li>
-                                <li>The King's Avatar</li>
-                                <li>House of Horrors</li>
-                                <li>A Will Eternal</li>
-                                <li>Forty Millenniums of Cultivation</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 3 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingThree">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseThree">
-                                Best Web Novels (JP Translated)
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseThree" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Jobless Reincarnation</li>
-                                <li>The Empty Box and Zeroth Maria</li>
-                                <li>Tensei Shitara Slime Datta Ken</li>
-                                <li>What Are You Doing at the End? Are You Busy? Can You Save Me?</li>
-                                <li>Re:Zero</li>
-                                <li>Ascendance of a Bookworm</li>
-                                <li>Three days of Happiness</li>
-                                <li>Sevens</li>
-                                <li>Pure Love ✕ Insult Complex (Warning!!)</li>
-                                <li>The Death Mage Who Doesn’t Want a Fourth Time</li>
-                                <li>About the Reckless Girl Who Kept Challenging a Reborn Man Like Me</li>
-                                <li>Gimai Seikatsu</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 4 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingFour">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseFour">
-                                Best Web Novels (KR Translated)
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseFour" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-
-                                <li>I Am The Monarch</li>
-                                <li>Ending Maker</li>
-                                <li>Second Life Ranker</li>
-                                <li>Kidnapped Dragons</li>
-                                <li>The Second Coming of Gluttony</li>
-                                <li>The Tutorial is too Hard</li>
-                                <li>Omniscient Reader's Viewpoint</li>
-                                <li>God of Cooking</li>
-                                <li>Under the Oak Tree</li>
-                                <li>The Novel’s Extra</li>
-                                <li>Trash of the Count’s Family</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 5 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingFive">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseFive">
-                                Best Cultivation Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseFive" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>I Shall Seal The Heavens</li>
-                                <li>A Will Eternal</li>
-                                <li>Cradle</li>
-                                <li>Reverend Insanity</li>
-                                <li>Renegade Immortal</li>
-                                <li>Tales of Herding Gods</li>
-                                <li>Battle Through the Heavens</li>
-                                <li>Heavenly Jewel Change</li>
-                                <li>Cultivation Chat Group</li>
-                                <li>Way of Choices</li>
-                                <li>Joy of Life</li>
-                                <li>My Senior Brother is Too Steady</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 6 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingSix">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseSix">
-                                Best Kingdom Building Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseSix" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Mediterranean Hegemon of Ancient Greece</li>
-                                <li>Release that Witch</li>
-                                <li>Tales of the Reincarnated Lord</li>
-                                <li>Tensei Shitara Slime Datta Ken</li>
-                                <li>Legend of Arch Magus</li>
-                                <li>Tree of Aeons</li>
-                                <li>Tyranny of Steel</li>
-                                <li>Life Reset</li>
-                                <li>Portal to Nova Roma</li>
-                                <li>How A Realist Hero Rebuild The Kingdom</li>
-                                <li>Holy Roman Empire</li>
-                                <li>Iron Teeth</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 7 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingSeven">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseSeven">
-                                Best R-18 Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseSeven" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Six Times A Day(& others from the Author)</li>
-                                <li>Pure Love ✕ Insult Complex(Warning!!)</li>
-                                <li>How To Become A Demon King</li>
-                                <li>24 Hearts</li>
-                                <li>Confinement King</li>
-                                <li>The Azra El Series</li>
-                                <li>Rewrite the Past</li>
-                                <li>Fourth Prince's Debauchery</li>
-                                <li>Bishoujo wo Jouzu ni Nikubenki ni Suru Houhou</li>
-                                <li>Harem Series</li>
-                                <li>Qingming College</li>
-                                <li>Parameter Remote Controller</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 8 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingEight">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseEight">
-                                Best Harem Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseEight" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Battle Through the Heavens</li>
-                                <li>My Wife is a Beautiful CEO</li>
-                                <li>Second Coming of Gluttony</li>
-                                <li>Dual Cultivation</li>
-                                <li>Stealing Spree</li>
-                                <li>A Will Eternal</li>
-                                <li>The Testament of Sister New Devil</li>
-                                <li>Campione </li>
-                                <li>Mushoku Tensei</li>
-                                <li>Ancient Strengthening Technique</li>
-                                <li>Against the Gods</li>
-                                <li>My Senior Brother is Too Steady</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 9 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingNine">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseNine">
-                                Best Show Biz Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseNine" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Top Management</li>
-                                <li>Superstars of Tomorrow</li>
-                                <li>I'm Really a Superstar</li>
-                                <li>The Great Storyteller</li>
-                                <li>Perfect Superstar</li>
-                                <li>Superstar From Age 0</li>
-                                <li>God of Music</li>
-                                <li>Perfect Superstar</li>
-                                <li>The CEO's Villainess Childhood Friend</li>
-                                <li>Hidden Marriage</li>
-                                <li>Debut or Die</li>
-                                <li>Van Gogh Reborn!</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingTen">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseTen">
-                                Best System Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseTen" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Warlock of Magus World</li>
-                                <li>The Strongest System</li>
-                                <li>It's Not Easy to Be a Man After Travelling to the Future</li>
-                                <li>A Stay-at-home Dad's Restaurant In An Alternate World</li>
-                                <li>Keyword Immortal</li>
-                                <li>Way of Devil</li>
-                                <li>Night Ranger</li>
-                                <li>Solo Leveling</li>
-                                <li>History's Number 1 Founder</li>
-                                <li>The Experimental Log of the Crazy Lich</li>
-                                <li>Top Tier Providence, Secretly Cultivate for a Thousand Years</li>
-                                <li>Kumo Desu ga, Nani ka?</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingXI">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXI">
-                                Best Web Novels With OP MC
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseXI" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Emperor's Domination</li>
-                                <li>Low Dimensional Game</li>
-                                <li>Overlord</li>
-                                <li>To be Power in The Shadows</li>
-                                <li>The Daily Life of the Immortal King</li>
-                                <li>Tensei Shitara Slime Datta Ken</li>
-                                <li>Overgeared</li>
-                                <li>Beware of Chicken</li>
-                                <li>Main Character Hides His Strength</li>
-                                <li>Legend of the Archmagus</li>
-                                <li>Kidnapped Dragons</li>
-                                <li>Battle Mage Farmer</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingXII">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseXII">
-                                Best Web Novels With Smart MC
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseXII" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Top 3 Web Novels from 2nd Card above</li>
-                                <li>Classroom of The Elite</li>
-                                <li>Divine Throne of Primordial Blood</li>
-                                <li>Log Horizon</li>
-                                <li>Great Tang Idyll</li>
-                                <li>No Game No Life</li>
-                                <li>Genius Prince's National Revitalization from State Deficit</li>
-                                <li>My Senior Brother is Too Steady</li>
-                                <li>Otherworldly Evil Monarch</li>
-                                <li>A Practical Guide to Evil</li>
-                                <li>Prince of Thorns</li>
-                                <li>Jackal Among Snakes</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingXIII">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseXIII">
-                                Best Comedy Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseXIII" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Cultivation Chat Group</li>
-                                <li>Keyword Immortal</li>
-                                <li>Library's of Heaven's Path</li>
-                                <li>Legend of Sun Knight</li>
-                                <li>Ultimate Scheming System </li>
-                                <li>I'm Really A Superstar</li>
-                                <li>Konosuba: God's Blessing On This Wonderful World!</li>
-                                <li>A Will Eternal</li>
-                                <li>Gamers of the Underworld</li>
-                                <li>My Disciple Died Yet Again</li>
-                                <li>The Strongest System</li>
-                                <li>I'm the Evil Lord of an Intergalactic Empire!</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingXIV">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseXIV">
-                                Best FanFics Web Novels
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseXIV" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Dark Matter by mysterycyclone(MCU x DC)</li>
-                                <li>Endless Path : Infinite Cosmos(Danmachi)</li>
-                                <li>A Crooked Man - In A Crooked House(M)</li>
-                                <li>HP: The Arcane Thief</li>
-                                <li>The Dark Wolf Shiro's Series</li>
-                                <li>His Best Girl by iluvaqt(M x DC)</li>
-                                <li>Too Bad. We Drinking Lemonade Today. by Meeceisme(Naruto)</li>
-                                <li>The Divine Hunter(Witcher 3)</li>
-                                <li>The Strongest Legend of Dragon Ball</li>
-                                <li>Dragonborn Saga(Skyrim)</li>
-                                <li>Anomaly(Highschool DxD)</li>
-                                <li>Highschool DxD A Minor Tale</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header" id="headingXV">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXV">
-                                Best FanFics Web Novels (Lemon)
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="collapseXV" class="collapse" data-parent="#accordion">
-                        <div class="card-body">
-                            <ul>
-                                <li>Eroninja(Naruto)</li>
-                                <li>Hokage Master(Naruto)</li>
-                                <li>100 Wives of Naruto</li>
-                                <li>Wonder Woman: Twisted Dominion</li>
-                                <li>Birds of Prey: Twisted Desire(DC)</li>
-                                <li>Two Valentines(HP)</li>
-                                <li>Harry Potter and Hermione Granger's S.e.x.u.a.l Secrets</li>
-                                <li>Uravity's HeroCon (MHA)</li>
-                                <li>In-A-Gadda-Da-Vida by idleside(MHA)</li>
-                                <li>Queens Of Darkness, Ladies Of Light(HP)</li>
-                                <li>VulgarAssassin's series(Naruto, HP)</li>
-                                <li>Accretion by RC_McLachlan(Thor)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+        <!-- Card 2 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo">
+                            Best Web Novels (CN Translated)
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Lord of The Mysteries</li>
+                            <li>Reverend Insanity</li>
+                            <li>The Grand Master Strategist</li>
+                            <li>I Shall Seal The Heavens</li>
+                            <li>Cultivation Chat Group</li>
+                            <li>The Legendary Mechanic</li>
+                            <li>Warlock of The Magus World</li>
+                            <li>Throne of Magical Arcana </li>
+                            <li>The King's Avatar</li>
+                            <li>House of Horrors</li>
+                            <li>A Will Eternal</li>
+                            <li>Forty Millenniums of Cultivation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree">
+                            Best Web Novels (JP Translated)
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Jobless Reincarnation</li>
+                            <li>The Empty Box and Zeroth Maria</li>
+                            <li>Tensei Shitara Slime Datta Ken</li>
+                            <li>What Are You Doing at the End? Are You Busy? Can You Save Me?</li>
+                            <li>Re:Zero</li>
+                            <li>Ascendance of a Bookworm</li>
+                            <li>Three days of Happiness</li>
+                            <li>Sevens</li>
+                            <li>Pure Love ✕ Insult Complex (Warning!!)</li>
+                            <li>The Death Mage Who Doesn’t Want a Fourth Time</li>
+                            <li>About the Reckless Girl Who Kept Challenging a Reborn Man Like Me</li>
+                            <li>Gimai Seikatsu</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFour">
+                            Best Web Novels (KR Translated)
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFour" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+
+                            <li>I Am The Monarch</li>
+                            <li>Ending Maker</li>
+                            <li>Second Life Ranker</li>
+                            <li>Kidnapped Dragons</li>
+                            <li>The Second Coming of Gluttony</li>
+                            <li>The Tutorial is too Hard</li>
+                            <li>Omniscient Reader's Viewpoint</li>
+                            <li>God of Cooking</li>
+                            <li>Under the Oak Tree</li>
+                            <li>The Novel’s Extra</li>
+                            <li>Trash of the Count’s Family</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFive">
+                            Best Cultivation Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFive" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>I Shall Seal The Heavens</li>
+                            <li>A Will Eternal</li>
+                            <li>Cradle</li>
+                            <li>Reverend Insanity</li>
+                            <li>Renegade Immortal</li>
+                            <li>Tales of Herding Gods</li>
+                            <li>Battle Through the Heavens</li>
+                            <li>Heavenly Jewel Change</li>
+                            <li>Cultivation Chat Group</li>
+                            <li>Way of Choices</li>
+                            <li>Joy of Life</li>
+                            <li>My Senior Brother is Too Steady</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 6 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSix">
+                            Best Kingdom Building Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseSix" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Mediterranean Hegemon of Ancient Greece</li>
+                            <li>Release that Witch</li>
+                            <li>Tales of the Reincarnated Lord</li>
+                            <li>Tensei Shitara Slime Datta Ken</li>
+                            <li>Legend of Arch Magus</li>
+                            <li>Tree of Aeons</li>
+                            <li>Tyranny of Steel</li>
+                            <li>Life Reset</li>
+                            <li>Portal to Nova Roma</li>
+                            <li>How A Realist Hero Rebuild The Kingdom</li>
+                            <li>Holy Roman Empire</li>
+                            <li>Iron Teeth</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 7 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingSeven">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeven">
+                            Best R-18 Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseSeven" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Six Times A Day(& others from the Author)</li>
+                            <li>Pure Love ✕ Insult Complex(Warning!!)</li>
+                            <li>How To Become A Demon King</li>
+                            <li>24 Hearts</li>
+                            <li>Confinement King</li>
+                            <li>The Azra El Series</li>
+                            <li>Rewrite the Past</li>
+                            <li>Fourth Prince's Debauchery</li>
+                            <li>Bishoujo wo Jouzu ni Nikubenki ni Suru Houhou</li>
+                            <li>Harem Series</li>
+                            <li>Qingming College</li>
+                            <li>Parameter Remote Controller</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 8 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingEight">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseEight">
+                            Best Harem Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseEight" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Battle Through the Heavens</li>
+                            <li>My Wife is a Beautiful CEO</li>
+                            <li>Second Coming of Gluttony</li>
+                            <li>Dual Cultivation</li>
+                            <li>Stealing Spree</li>
+                            <li>A Will Eternal</li>
+                            <li>The Testament of Sister New Devil</li>
+                            <li>Campione </li>
+                            <li>Mushoku Tensei</li>
+                            <li>Ancient Strengthening Technique</li>
+                            <li>Against the Gods</li>
+                            <li>My Senior Brother is Too Steady</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Card 9 -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingNine">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseNine">
+                            Best Show Biz Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseNine" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Top Management</li>
+                            <li>Superstars of Tomorrow</li>
+                            <li>I'm Really a Superstar</li>
+                            <li>The Great Storyteller</li>
+                            <li>Perfect Superstar</li>
+                            <li>Superstar From Age 0</li>
+                            <li>God of Music</li>
+                            <li>Perfect Superstar</li>
+                            <li>The CEO's Villainess Childhood Friend</li>
+                            <li>Hidden Marriage</li>
+                            <li>Debut or Die</li>
+                            <li>Van Gogh Reborn!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingTen">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTen">
+                            Best System Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseTen" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Warlock of Magus World</li>
+                            <li>The Strongest System</li>
+                            <li>It's Not Easy to Be a Man After Travelling to the Future</li>
+                            <li>A Stay-at-home Dad's Restaurant In An Alternate World</li>
+                            <li>Keyword Immortal</li>
+                            <li>Way of Devil</li>
+                            <li>Night Ranger</li>
+                            <li>Solo Leveling</li>
+                            <li>History's Number 1 Founder</li>
+                            <li>The Experimental Log of the Crazy Lich</li>
+                            <li>Top Tier Providence, Secretly Cultivate for a Thousand Years</li>
+                            <li>Kumo Desu ga, Nani ka?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingXI">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXI">
+                            Best Web Novels With OP MC
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseXI" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Emperor's Domination</li>
+                            <li>Low Dimensional Game</li>
+                            <li>Overlord</li>
+                            <li>To be Power in The Shadows</li>
+                            <li>The Daily Life of the Immortal King</li>
+                            <li>Tensei Shitara Slime Datta Ken</li>
+                            <li>Overgeared</li>
+                            <li>Beware of Chicken</li>
+                            <li>Main Character Hides His Strength</li>
+                            <li>Legend of the Archmagus</li>
+                            <li>Kidnapped Dragons</li>
+                            <li>Battle Mage Farmer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingXII">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXII">
+                            Best Web Novels With Smart MC
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseXII" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Top 3 Web Novels from 2nd Card above</li>
+                            <li>Classroom of The Elite</li>
+                            <li>Divine Throne of Primordial Blood</li>
+                            <li>Log Horizon</li>
+                            <li>Great Tang Idyll</li>
+                            <li>No Game No Life</li>
+                            <li>Genius Prince's National Revitalization from State Deficit</li>
+                            <li>My Senior Brother is Too Steady</li>
+                            <li>Otherworldly Evil Monarch</li>
+                            <li>A Practical Guide to Evil</li>
+                            <li>Prince of Thorns</li>
+                            <li>Jackal Among Snakes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingXIII">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXIII">
+                            Best Comedy Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseXIII" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Cultivation Chat Group</li>
+                            <li>Keyword Immortal</li>
+                            <li>Library's of Heaven's Path</li>
+                            <li>Legend of Sun Knight</li>
+                            <li>Ultimate Scheming System </li>
+                            <li>I'm Really A Superstar</li>
+                            <li>Konosuba: God's Blessing On This Wonderful World!</li>
+                            <li>A Will Eternal</li>
+                            <li>Gamers of the Underworld</li>
+                            <li>My Disciple Died Yet Again</li>
+                            <li>The Strongest System</li>
+                            <li>I'm the Evil Lord of an Intergalactic Empire!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingXIV">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXIV">
+                            Best FanFics Web Novels
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseXIV" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Dark Matter by mysterycyclone(MCU x DC)</li>
+                            <li>Endless Path : Infinite Cosmos(Danmachi)</li>
+                            <li>A Crooked Man - In A Crooked House(M)</li>
+                            <li>HP: The Arcane Thief</li>
+                            <li>The Dark Wolf Shiro's Series</li>
+                            <li>His Best Girl by iluvaqt(M x DC)</li>
+                            <li>Too Bad. We Drinking Lemonade Today. by Meeceisme(Naruto)</li>
+                            <li>The Divine Hunter(Witcher 3)</li>
+                            <li>The Strongest Legend of Dragon Ball</li>
+                            <li>Dragonborn Saga(Skyrim)</li>
+                            <li>Anomaly(Highschool DxD)</li>
+                            <li>Highschool DxD A Minor Tale</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header" id="headingXV">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseXV">
+                            Best FanFics Web Novels (Lemon)
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseXV" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <ul>
+                            <li>Eroninja(Naruto)</li>
+                            <li>Hokage Master(Naruto)</li>
+                            <li>100 Wives of Naruto</li>
+                            <li>Wonder Woman: Twisted Dominion</li>
+                            <li>Birds of Prey: Twisted Desire(DC)</li>
+                            <li>Two Valentines(HP)</li>
+                            <li>Harry Potter and Hermione Granger's S.e.x.u.a.l Secrets</li>
+                            <li>Uravity's HeroCon (MHA)</li>
+                            <li>In-A-Gadda-Da-Vida by idleside(MHA)</li>
+                            <li>Queens Of Darkness, Ladies Of Light(HP)</li>
+                            <li>VulgarAssassin's series(Naruto, HP)</li>
+                            <li>Accretion by RC_McLachlan(Thor)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
-    <!-- 
+</div>
+<!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
+<!-- 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script> -->
-    <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<!-- <script src="{{ url_for('static', filename='js/jquery-3.5.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script> -->
 
-    <script>
-        $(document).ready(function () {
-            $('.btn-link').on('click', function () {
-                $('.collapse').collapse('hide');
-            });
+<!-- <script>
+    $(document).ready(function () {
+        $('.btn-link').on('click', function () {
+            $('.collapse').collapse('hide');
         });
-    </script>
-
-</body>
-
-</html>
+    });
+</script> -->
+{% endblock %}

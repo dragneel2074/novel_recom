@@ -43,7 +43,7 @@ $(document).ready(function () {
                 var urlMap = {
                     'webnovel.com': 'https://nobleradar.com/go/webnovel',
                     'amazon.com': 'https://nobleradar.com/go/amazon'
-                  };
+                };
                 var lines = response.message.split('\n');
                 // Format the response message
                 var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
@@ -73,7 +73,7 @@ $(document).ready(function () {
 
     $("#imagegenButton").click(function (event) {
         event.preventDefault();
-    
+
         var selectedNovelName = $('#selected_novel_name').val();
         $.ajax({
             url: '/ai-anime-image-generator',
@@ -86,12 +86,12 @@ $(document).ready(function () {
 
                 // Set the src attribute of the img tag to the URL of the generated image
                 img.attr('src', response.image_url);
-    
+
                 // Append the img tag to the container
                 $('#imageContainer').html(img);
                 // Set the src attribute of the img tag to the URL of the generated image
-             //   $('#generatedImage').attr('src', response.image_url);
-              
+                //   $('#generatedImage').attr('src', response.image_url);
+
                 $("#loader").hide();
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -104,7 +104,7 @@ $(document).ready(function () {
             }
         });
     });
-    
+
 
 
     $(".submitBtn").click(function () {
@@ -192,12 +192,6 @@ $(document).ready(function () {
         $(this).addClass('active');
     });
 });
-
-window.onload = function() {
-    document.getElementById('quizSubmit').onclick = function() {
-        alert('Your answers have been submitted!');
-    };
-};
 
 
 // top picks
