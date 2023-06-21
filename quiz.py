@@ -1,5 +1,5 @@
 import os
-from main import app, User, db, QuizResult
+from main import app, User, db, QuizResult, sitemapper
 from flask import Flask, abort, render_template, request, redirect, session, url_for, flash
 import csv
 import random
@@ -30,11 +30,10 @@ def load_questions(directory):
 
 questions = load_questions('data/quiz')
 
-
+@sitemapper.include(lastmod="2023-06-20")
 @app.route('/quiz_select')
 def quiz_select():
     return render_template('quiz_select.html', quizzes=questions.keys(), top_scores=get_top_scores())
-
 
 @app.route('/quiz/<quiz_name>')
 def quiz(quiz_name):
@@ -106,7 +105,6 @@ def submit_quiz_name(quiz_name):
     return redirect(url_for('result', user_id=result.user_id, quiz_name=quiz_name))
 
 
-@app.route('/result/<int:user_id>/<quiz_name>')
 def result(user_id, quiz_name):
     quiz_name = unquote(quiz_name)
     user = User.query.get_or_404(user_id)

@@ -2,10 +2,16 @@ from flask import Flask
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import g
+
+from flask_sitemapper import Sitemapper
+
+
+sitemapper = Sitemapper()
 # from flask_migrate import Migrate
 
 
 app = Flask(__name__)
+sitemapper.init_app(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
@@ -40,3 +46,8 @@ class QuizResult(db.Model):
     quiz_topic = db.Column(db.String(100), nullable=False)  # new field
     score = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return sitemapper.generate()

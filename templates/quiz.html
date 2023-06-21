@@ -8,6 +8,10 @@ Let's Play Web Novel Quiz
 Let's Start Playing Quiz
 {% endblock %}
 
+{% block can_url %}
+{{ url_for('quiz', quiz_name=quiz_name, _external=True) }}
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
   {% with messages = get_flashed_messages(with_categories=true) %}

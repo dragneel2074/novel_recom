@@ -1,4 +1,4 @@
-from main import app
+from main import app, sitemapper
 import contact
 import quiz
 import os
@@ -13,15 +13,11 @@ import json
 import hashlib
 from imaginepy import Imagine, Style, Ratio
 import uuid
-from flask_sitemapper import Sitemapper
 import time
 
 
-sitemapper = Sitemapper()
-
 #app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
-sitemapper.init_app(app)
 
 # load the data
 novel_list = pickle.load(
@@ -34,7 +30,7 @@ similarity = pickle.load(
     open('D:/projects/flask - Copy/data/similarity.pkl', 'rb'))
 
 
-@sitemapper.include(lastmod="2023-06-10")
+@sitemapper.include(lastmod="2023-06-21")
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
@@ -204,9 +200,6 @@ def top_picks():
     return render_template("top-picks.html")
 
 
-@app.route('/sitemap.xml')
-def sitemap():
-    return sitemapper.generate()
 
 
 #AWS Configuration
