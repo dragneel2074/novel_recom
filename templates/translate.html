@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+Translate
+{% endblock %}
+{% block title1 %}
+Translate
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <label for="apiKey">OpenAI API Key:</label>
+
+            <input type="text" id="apiKey" placeholder="Enter your API key..." class="translate-input">
+            <button id="apiKeyButton" onclick="validateApiKey()" class="translate-button">Submit</button>
+            <p style="font-size: smaller;">OpenAI provides free credit of $5 when you first create the account. With free credits, You can translate around 300
+                chapters of 1500 words each. <a href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">How to Get API key?</a></p>
+            <div id="apiKeyStatus" class="disconnected">Disconnected</div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <textarea id="inputText" placeholder="Enter text here..." rows="20" class="translate-textarea"></textarea>
+        </div>
+        <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <button id="translateButton" onclick="translateText()" class="translate-button">Translate</button>
+        </div>
+
+        <div class="col-md-5">
+            <div id="translateStatus" style="display: none;">Processing... Please Wait</div>
+
+            <textarea id="outputText" readonly rows="20" class="translate-textarea"></textarea>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div id="loader" class="loader" style="display: none;"></div>
+    </div>
+</div>
+<script>
+    var apiKey = localStorage.getItem('apiKey');
+    if (apiKey != null) {
+        window.onload = validateApiKey;
+
+    }
+
+    function validateApiKey() {
+        var apiKey = localStorage.getItem('apiKey');
+
+        // If the API key is not stored, get it from the input field
+        if (apiKey === null) {
+            apiKey = document.getElementById('apiKey').value;
+        }
+        var apiKeyStatus = document.getElementById('apiKeyStatus');
+        var translateStatus = document.getElementById('translateStatus');
+        translateStatus.style.display = 'block';
+
+        // Check if the API key is not empty
+        if (!apiKey.trim()) {
+            alert('Please enter your OpenAI API key.');
+            return;
+        }
+
+        // Call the API key validation API
+        fetch('/validate-api-key', {
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'apiKey=' + encodeURIComponent(apiKey)
+        })
+            .then(response => response.json())
+            .then(data => {
+                translateStatus.style.display = 'none';
+                // Update the connection status
+                if (data.error) {
+                    apiKeyStatus.textContent = 'Disconnected';
+                    apiKeyStatus.className = 'disconnected';
+                } else {
+                    apiKeyStatus.textContent = 'Connected';
+                    apiKeyStatus.className = 'connected';
+
+                    localStorage.setItem('apiKey', apiKey);
+                }
+            })
+            .catch(() => {
+                translateStatus.style.display = 'none';
+                // Show an error message
+                alert('An error occurred while validating the API key.');
+            });
+    }
+
+    function translateText() {
+        var apiKey = localStorage.getItem('apiKey');
+
+        // If the API key is not stored, get it from the input field
+        if (apiKey === null) {
+            apiKey = document.getElementById('apiKey').value;
+        }
+        var inputText = document.getElementById('inputText').value;
+        var outputText = document.getElementById('outputText');
+        var translateStatus = document.getElementById('translateStatus');
+
+        // Check if the API key is not empty
+        if (!apiKey.trim()) {
+            alert('Please enter your OpenAI API key.');
+            return;
+        }
+
+        // Check if the input text is not empty
+        if (!inputText.trim()) {
+            alert('Please enter some text.');
+            return;
+        }
+
+        // Show the translation status
+        translateStatus.style.display = 'block';
+
+        // Call the translation API
+        fetch('/translate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'text=' + encodeURIComponent(inputText) + '&apiKey=' + encodeURIComponent(apiKey)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Hide the translation status
+                translateStatus.style.display = 'none';
+
+                // Show the translated text or an error message
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    outputText.value = data.translated_text;
+                }
+            })
+            .catch(() => {
+                // Hide the translation status
+                translateStatus.style.display = 'none';
+
+                // Show an error message
+                alert('An error occurred while translating the text.');
+            });
+    }
+</script>
+
+{% endblock %}

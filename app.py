@@ -1,6 +1,7 @@
 from main import app, sitemapper
 import contact
 import quiz
+import translate
 import os
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
 import random
@@ -160,6 +161,7 @@ def novelmateai():
 @app.route('/ai-anime-image-generator', methods=['POST'])
 def main():
     # Generate a UUID
+    
     image_id = uuid.uuid4()
 
 # Convert the UUID to a string and use it in the filename

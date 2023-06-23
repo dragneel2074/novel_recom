@@ -15,16 +15,18 @@ def load_questions(directory):
             questions = []
             with open(os.path.join(directory, filename), 'r', encoding='utf-8') as file:
                 reader = csv.reader(file)
-                for i, row in enumerate(reader):
-                    for row in reader:
-                        if len(row) != 6:
-                            raise ValueError(
-                                f"Each row in the CSV file should have exactly 6 columns, but got {len(row)} columns.")
+                rows = list(reader)
 
-                        question = {
-                            'id': i, 'question': row[0], 'options': row[1:5], 'answer': row[5]}
-                        questions.append(question)
-                question_sets[filename[:-4]] = questions
+                random.shuffle(rows)
+                for i, row in enumerate(rows):
+                    if len(row) != 6:
+                        raise ValueError(
+                            f"Each row in the CSV file should have exactly 6 columns, but got {len(row)} columns.")
+
+                    question = {
+                        'id': i, 'question': row[0], 'options': row[1:5], 'answer': row[5]}
+                    questions.append(question)
+            question_sets[filename[:-4]] = questions
     return question_sets
 
 

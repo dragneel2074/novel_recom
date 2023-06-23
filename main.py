@@ -2,7 +2,6 @@ from flask import Flask
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import g
-
 from flask_sitemapper import Sitemapper
 
 
