@@ -22,23 +22,23 @@ def validate_api_key_route():
     return jsonify(success=True)
 
 
-@app.route('/api-translate')
+@app.route('/web-novel-translate')
 def translate_page():
     return render_template('translate.html')
 
 
 def translate_text(user_input, api_key):
     translated_text = None
-    print(api_key)
     url = 'https://api.openai.com/v1/chat/completions'
     headers = {
         'Authorization': 'Bearer ' + api_key,
         'Content-Type': 'application/json'
     }
     data = {
-        "model": "gpt-3.5-turbo",
+        "model": "gpt-3.5-turbo-16k",
+       
         "messages": [
-            {"role": "system", "content": "You are a helpful web novel translator that translates web novel chapters to English."},
+            {"role": "system", "content": "Follow the commands: 1. Act as a Professional Web Novel Translator. 2. Translate the chapter to English."},
             {"role": "user", "content": user_input}
         ]
     }
@@ -50,7 +50,7 @@ def translate_text(user_input, api_key):
     return translated_text
 
 
-@app.route('/translate', methods=['POST'])
+@app.route('/translate-api', methods=['POST'])
 def translate_route():
     try:
         text = request.form.get('text')

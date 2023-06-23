@@ -16,10 +16,18 @@ Translate
 
             <input type="text" id="apiKey" placeholder="Enter your API key..." class="translate-input">
             <button id="apiKeyButton" onclick="validateApiKey()" class="translate-button">Submit</button>
-            <p style="font-size: smaller;">OpenAI provides free credit of $5 when you first create the account. With free credits, You can translate around 300
-                chapters of 1500 words each. <a href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">How to Get API key?</a></p>
-            <div id="apiKeyStatus" class="disconnected">Disconnected</div>
+            <p style="font-size: smaller;">OpenAI provides free credit of $5 when you first create the account. With
+                free credits, You can translate around 180
+                chapters of 1500 words each. <a
+                    href="https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/">How to Get API key?</a></p>
+
         </div>
+
+    </div>
+    <div class="d-flex align-items-start">
+        <div id="apiKeyStatus" class="disconnected">Disconnected</div>
+        <text onclick="removeApiKey()" class="remove-api-button" style="margin: auto 10px; font-size: smaller;">Remove
+            API Key</text>
     </div>
     <div class="row justify-content-center">
         <div class="col-md-5">
@@ -35,16 +43,27 @@ Translate
             <textarea id="outputText" readonly rows="20" class="translate-textarea"></textarea>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div id="loader" class="loader" style="display: none;"></div>
-    </div>
+
 </div>
 <script>
     var apiKey = localStorage.getItem('apiKey');
     if (apiKey != null) {
         window.onload = validateApiKey;
 
+
+
     }
+    function removeApiKey() {
+        localStorage.removeItem('apiKey');
+        // Update the connection status to disconnected
+        var apiKeyStatus = document.getElementById('apiKeyStatus');
+        apiKeyStatus.textContent = 'Disconnected';
+        apiKeyStatus.className = 'disconnected';
+        // Hide the Remove API Key button
+        var removeApiKeyButton = document.getElementById('removeApiKeyButton');
+        removeApiKeyButton.style.display = 'none';
+    }
+
 
     function validateApiKey() {
         var apiKey = localStorage.getItem('apiKey');
@@ -56,6 +75,7 @@ Translate
         var apiKeyStatus = document.getElementById('apiKeyStatus');
         var translateStatus = document.getElementById('translateStatus');
         translateStatus.style.display = 'block';
+
 
         // Check if the API key is not empty
         if (!apiKey.trim()) {
@@ -84,6 +104,8 @@ Translate
                     apiKeyStatus.className = 'connected';
 
                     localStorage.setItem('apiKey', apiKey);
+
+
                 }
             })
             .catch(() => {
@@ -120,7 +142,7 @@ Translate
         translateStatus.style.display = 'block';
 
         // Call the translation API
-        fetch('/translate', {
+        fetch('/translate-api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -134,6 +156,7 @@ Translate
 
                 // Show the translated text or an error message
                 if (data.error) {
+
                     alert(data.error);
                 } else {
                     outputText.value = data.translated_text;
