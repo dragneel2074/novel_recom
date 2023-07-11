@@ -1,9 +1,10 @@
-from main import app, sitemapper
+from main import app, sitemapper, socketio
 import contact
 import quiz
 import translate
+import epubgen
 import os
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, send_from_directory
 import random
 import pandas as pd
 import numpy as np
@@ -17,7 +18,7 @@ import uuid
 import time
 
 
-#app = Flask(__name__)
+# app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
 # load the data
@@ -35,7 +36,7 @@ similarity = pickle.load(
 @app.route('/', methods=['GET', 'POST'])
 def home():
     recommendations = None
-    amazon_products = None
+   # amazon_products = None
     selected_novel_name = request.form.get(
         'selected_novel_name') or request.args.get('selected_novel_name') or None
     slider_value = request.form.get('slider')
@@ -57,14 +58,14 @@ def home():
            # recommendation_images = [rec['image_url'] for rec in recommendations]
            # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
 
-            amazon_products = get_amazon_products(selected_novel_name)
+          #  amazon_products = get_amazon_products(selected_novel_name)
         elif action == '🎲 Random':
             recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],
                                 'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
             # recommendation_names = [rec['name'] for rec in recommendations]
             # recommendation_images = [rec['image_url'] for rec in recommendations]
             # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
-            amazon_products = get_amazon_products('new light novels')
+          #  amazon_products = get_amazon_products('new light novels')
     elif request.method == 'GET':
         # selected_novel_name = request.args.get('selected_novel_name')
         if selected_novel_name:
@@ -83,9 +84,9 @@ def home():
             #     recommendation_pub = [rec['english_publisher']
             #                           for rec in recommendations]
 
-            amazon_products = get_amazon_products(selected_novel_name)
+          #  amazon_products = get_amazon_products(selected_novel_name)
 
-    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=amazon_products)
+    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=[])
 
 
 def recommend(novel, slider_start):
@@ -119,30 +120,49 @@ def autocomplete():
 
 
 # chatGPT
+# def chat(user_input):
+#     url = 'https://api.pawan.krd/v1/chat/completions'
+#     job = "You are NovelNavigator, an AI assistant. When given a novel's name, your task is to recommend 2 similar novels, such as Release that Witch and make 'Release that Witch linkable' clickable HTML links. Link the titles to the website where they can be found.if the source is webnovel, link with https://tinyurl.com/webnovel10 url. If unsure of the source, link them to amazon. Your output should only consist of the clickable novel titles, nothing else. Ensure the titles and links fit within 100 tokens."
+
+#     headers = {
+#         'Authorization': 'Bearer pk-NslFMEokdTmDEAwoQDJVfLsZQPHRPxlcAFKSpyIJkkaFCFxm',
+#         'Content-Type': 'application/json'
+#     }
+#     data = {
+#         "model": "gpt-3.5-turbo",
+#         "max_tokens": 100,
+#         "messages": [
+#             {
+#                 "role": "system",
+#                 "content": job
+#             },
+#             {
+#                 "role": "user",
+#                 "content": user_input
+#             }
+#         ]
+#     }
+#     response = requests.post(url, headers=headers, data=json.dumps(data))
+#     print(response.text)
+#     return response.json()
+
 def chat(user_input):
-    url = 'https://api.pawan.krd/v1/chat/completions'
-    job = "You are NovelNavigator, an AI assistant. When given a novel's name, your task is to recommend 2 similar novels, such as Release that Witch and make 'Release that Witch linkable' clickable HTML links. Link the titles to the website where they can be found.if the source is webnovel, link with https://tinyurl.com/webnovel10 url. If unsure of the source, link them to amazon. Your output should only consist of the clickable novel titles, nothing else. Ensure the titles and links fit within 100 tokens."
+    url = 'https://api.pawan.krd/v1/completions'
+    job = f"As a connoisseur of Chinese, Japanese, and English Web Novels, based on: {user_input}, recommend 3 novels with brief overviews, making sure to align with the user's interests."
 
     headers = {
-        'Authorization': 'Bearer pk-NslFMEokdTmDEAwoQDJVfLsZQPHRPxlcAFKSpyIJkkaFCFxm',
+        'Authorization': 'Bearer pk-xsmNJWGSvHjJMuQtmKbYYkluOKwdNHqCGDAYRZdTEgLcSIiv',
         'Content-Type': 'application/json'
     }
     data = {
-        "model": "gpt-3.5-turbo",
-        "max_tokens": 100,
-        "messages": [
-            {
-                "role": "system",
-                "content": job
-            },
-            {
-                "role": "user",
-                "content": user_input
-            }
-        ]
+        "model": "text-davinci-003",
+        "max_tokens": 256,
+        "prompt": job,
+        "temperature": 0.2,
+
     }
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    print(response)
+    print(response.text)
     return response.json()
 
 
@@ -151,7 +171,7 @@ def novelmateai():
     try:
         selected_novel_name = request.form.get('selected_novel_name')
         response = chat(selected_novel_name)
-        bot_output = response['choices'][0]['message']['content']
+        bot_output = response['choices'][0]['text']
         print(bot_output)
         return jsonify({'message': bot_output})
     except Exception as e:
@@ -161,7 +181,7 @@ def novelmateai():
 @app.route('/ai-anime-image-generator', methods=['POST'])
 def main():
     # Generate a UUID
-    
+
     image_id = uuid.uuid4()
 
 # Convert the UUID to a string and use it in the filename
@@ -171,7 +191,7 @@ def main():
     img_data = imagine.sdprem(
         prompt=request.form.get('selected_novel_name'),
 
-        style=Style.IMAGINE_V4_Beta,
+        style=Style.ABSTRACT_VIBRANT,
         ratio=Ratio.RATIO_16X9
     )
 
@@ -202,15 +222,15 @@ def top_picks():
     return render_template("top-picks.html")
 
 
-
-
-#AWS Configuration
+# AWS Configuration
 HOST = "webservices.amazon.com"
 URI_PATH = "/paapi5/searchitems"
 ACCESS_KEY = ''
-SECRET_KEY =  ''
+SECRET_KEY = ''
 REGION = "us-east-1"
-request_signer = AwsRequestSigner(REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
+request_signer = AwsRequestSigner(
+    REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
+
 
 def sign_aws_request(payload):
     payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
@@ -220,8 +240,10 @@ def sign_aws_request(payload):
         "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
         "content-encoding": "amz-1.0"
     }
-    headers.update(request_signer.sign_with_headers("POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
+    headers.update(request_signer.sign_with_headers(
+        "POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
     return headers
+
 
 def get_amazon_products(keyword):
     payload = {
@@ -234,11 +256,23 @@ def get_amazon_products(keyword):
 
     headers = sign_aws_request(payload)
 
-    response = requests.post(f"https://{HOST}{URI_PATH}", headers=headers, json=payload, verify=False)
+    response = requests.post(
+        f"https://{HOST}{URI_PATH}", headers=headers, json=payload, verify=False)
     time.sleep(0.1)
     if response.status_code == 200:
         return response.json().get("SearchResult", {}).get("Items", None)
     else:
         return None
+
+
+@app.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
+
+@app.route('/webnovel-redeem-codes')
+def codes():
+    return render_template('codes.html')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)

@@ -1,116 +1,31 @@
 {% extends "base.html" %}
 
 {% block title %}
-Get your top picks here
+Get Webnovel Redeem Codes
 {% endblock %}
-
 {% block title1 %}
-📚 Novel Recommender System
+Webnovel Redeem Codes
 {% endblock %}
 
 {% block content %}
-<!-- Flash messages -->
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<div class="alert alert-warning">
-    {{ messages[0] }}
-</div>
-{% endif %}
-{% endwith %}
-
 <div class="container">
-    <form method="POST">
-        <div class="form-group">
-            <label for="selected_novel_name">🔎 Choose a Novel to get Recommendations</label>
-            <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
-                value="{{selected_novel_name|e}}" placeholder="Enter novel name here">
-        </div>
-        <input type="range" id="slider" name="slider" min="1" max="100" value="1">
-
-        <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
-        <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
-
-
-        <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
-            id="novelmateaiButton">
-        <input type="button" name="action4" value="Generate Image" class="btn btn-secondary submitBtn"
-            id="imagegenButton">
-        <br> <p style="font-size: smaller;">The NovelMate & Image generation services are down!</p>
-    </form>
-
-</div>
-<div class="container text-center">
-    <div class="loader" id="loader"></div>
-</div>
-<div id="novelmateaiResponse">
-    <p><b>NovelMate:</b> <span id="botOutput" class="novelmate-output"></span></p>
-
-</div>
-
-
-
-
-
-
-{% if recommendations %}
-<div class="container mt-4">
-    <h2>Here are some novels you might enjoy:</h2>
-    <div id="recommendations-row" class="row">
-        {% for novel in recommendations %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="{{ novel.image_url }}" onerror="imgError(this);" alt="{{ novel.name }}" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}" class="novel-name-link">{{
-                            novel.name }}</a>
-                    </h5>
-                    {% if novel.english_publisher and novel.english_publisher.lower() == "webnovel" %}
-                    <a href="https://www.webnovel.com/" target="_blank" class="btn btn-primary">📖 Read This
-                        Novel</a>
-                    {% elif novel.english_publisher.lower() == "dreame" %}
-                    <a href="https://www.dreame.com" target="_blank" class="btn btn-primary">Read the Novel</a>
-                    {% elif novel.english_publisher.lower() in ["seven seas","j-novel club", "tentai books","yen
-                    press"] %}
-                    <a href="https://www.amazon.com" target="_blank" class="btn btn-primary">Read the
-                        Novel</a>
-                    {% else %}
-                    <a href="https://www.google.com/search?q={{ novel.name }}" target="_blank"
-                        class="btn btn-primary">📖 Read This
-                        Novel</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-
-</div>
-{% endif %}
-
-
-
-{% if amazon_products %}
-<div class="container mt-4">
-    <h2>Check out these Amazon products:</h2>
     <div class="row">
-        {% for product in amazon_products %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product["ItemInfo"]["Title"]["DisplayValue"] }}</h5>
-                    <center> <img src="{{ product['Images']['Primary']['Large']['URL'] | default('#') }}"
-                            alt="{{ product['ItemInfo']['Title']['DisplayValue'] | default('No Title') }}"
-                            class="card-img-top">
-                        <a href="{{ product['DetailPageURL'] | default('#') }}" class="btn btn-primary">Buy on
-                            Amazon</a>
-                    </center>
-                </div>
+        <div class="col-md-12">
+            <h2 class="text-primary">Webnovel Redeem Codes 2023 May</h2>
+            <p class="text-secondary">Here are the latest Webnovel redeem codes for May 2023. These codes can be used to
+                redeem various rewards on the Webnovel platform. Please note that these codes are time-limited and may
+                expire. Make sure to redeem them as soon as possible.</p>
+            {% set codes = ['CodeXX', 'AFFDJFDF', 'EREIDFDFD', 'IFDFIDFDIF', 'EIUIDFABJB'] %}
+            {% for code in codes %}
+            <div id="code{{ loop.index }}" style="display: none;">
+                <p class="text-info">Code: {{ code }} - Reward: {{ loop.index * 50 }} Coins</p>
             </div>
+            <button class="btn btn-primary"
+                onclick="showCode('code{{ loop.index }}', 'https://nobleradar.com/go/webnovel')">Show</button>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
-{% endif %}
 
 
 <div id="featuredContainer" class="container">
@@ -212,5 +127,15 @@ Get your top picks here
     </div>
 </div>
 
-
+<script>
+    function showCode(id, url) {
+        var codeDiv = document.getElementById(id);
+        if (codeDiv.style.display === "none") {
+            window.open(url, '_blank');
+            codeDiv.style.display = "block";
+        } else {
+            codeDiv.style.display = "none";
+        }
+    }
+</script>
 {% endblock %}

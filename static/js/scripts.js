@@ -40,14 +40,16 @@ $(document).ready(function () {
                     $("#loader").hide();
                     return
                 }
-                var urlMap = {
-                    'webnovel.com': 'https://nobleradar.com/go/webnovel',
-                    'amazon.com': 'https://nobleradar.com/go/amazon'
-                };
+
+                // var lines = response.message.split('\n');
+                // // Format the response message
+                // var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
+
                 var lines = response.message.split('\n');
-                // Format the response message
                 var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
-                formattedMessage = formattedMessage.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+
+                // Append the link at the end
+                formattedMessage += '<p>You can read these here: <a href="https://nobleradar.com/go/webnovel" target="_blank">www.nobleradar.com/go/webnovel</a></p>';
 
                 // Display the formatted message
                 $('#botOutput').html(formattedMessage);
@@ -207,3 +209,136 @@ $(document).ready(function () {
 //         }
 //     });
 // });
+
+var apiKey = localStorage.getItem('apiKey');
+if (apiKey != null) {
+    window.onload = validateApiKey;
+
+
+
+}
+function removeApiKey() {
+
+    localStorage.removeItem('apiKey');
+
+    // Update the connection status to disconnected
+    var apiKeyStatus = document.getElementById('apiKeyStatus');
+    apiKeyStatus.textContent = 'Disconnected';
+    apiKeyStatus.className = 'disconnected';
+    // Hide the Remove API Key button
+    // var removeApiKeyButton = document.getElementById('removeApiKeyButton');
+    var removeApiKeyButton = document.querySelector('.remove-api-button');
+
+    removeApiKeyButton.style.display = 'none';
+}
+
+
+
+function validateApiKey() {
+    var apiKey = localStorage.getItem('apiKey');
+
+    // If the API key is not stored, get it from the input field
+    if (apiKey === null) {
+        apiKey = document.getElementById('apiKey').value;
+    }
+    var apiKeyStatus = document.getElementById('apiKeyStatus');
+    var translateStatus = document.getElementById('translateStatus');
+    translateStatus.style.display = 'block';
+
+
+    // Check if the API key is not empty
+    if (!apiKey.trim()) {
+        alert('Please enter your OpenAI API key.');
+        return;
+    }
+
+    //  Call the API key validation API
+
+
+    fetch('/validate-api-key', {
+
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'apiKey=' + encodeURIComponent(apiKey)
+    })
+        .then(response => response.json())
+        .then(data => {
+            translateStatus.style.display = 'none';
+            // Update the connection status
+            if (data.error) {
+                apiKeyStatus.textContent = 'Disconnected';
+                apiKeyStatus.className = 'disconnected';
+            } else {
+                apiKeyStatus.textContent = 'Connected';
+                apiKeyStatus.className = 'connected';
+
+                localStorage.setItem('apiKey', apiKey);
+
+
+            }
+        })
+        .catch(() => {
+            translateStatus.style.display = 'none';
+            // Show an error message
+            alert('An error occurred while validating the API key.');
+        });
+}
+
+function translateText() {
+    var apiKey = localStorage.getItem('apiKey');
+
+    // If the API key is not stored, get it from the input field
+    if (apiKey === null) {
+        apiKey = document.getElementById('apiKey').value;
+    }
+    var inputText = document.getElementById('inputText').value;
+    var outputText = document.getElementById('outputText');
+    var translateStatus = document.getElementById('translateStatus');
+
+    // Check if the API key is not empty
+    if (!apiKey.trim()) {
+        alert('Please enter your OpenAI API key.');
+        return;
+    }
+
+    // Check if the input text is not empty
+    if (!inputText.trim()) {
+        alert('Please enter some text.');
+        return;
+    }
+
+    // Show the translation status
+    translateStatus.style.display = 'block';
+
+    // Call the translation API
+    fetch('/translate-api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'text=' + encodeURIComponent(inputText) + '&apiKey=' + encodeURIComponent(apiKey)
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Hide the translation status
+            translateStatus.style.display = 'none';
+
+            // Show the translated text or an error message
+            if (data.error) {
+
+                alert(data.error);
+            } else {
+                outputText.value = data.translated_text;
+            }
+        })
+        .catch(() => {
+            // Hide the translation status
+            translateStatus.style.display = 'none';
+
+            // Show an error message
+            alert('An error occurred while translating the text.');
+        });
+}
+

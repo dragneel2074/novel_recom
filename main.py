@@ -3,6 +3,8 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import g
 from flask_sitemapper import Sitemapper
+from flask_socketio import SocketIO, emit
+
 
 
 sitemapper = Sitemapper()
@@ -11,6 +13,8 @@ sitemapper = Sitemapper()
 
 app = Flask(__name__)
 sitemapper.init_app(app)
+socketio = SocketIO(app)
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
@@ -50,3 +54,4 @@ class QuizResult(db.Model):
 @app.route('/sitemap.xml')
 def sitemap():
     return sitemapper.generate()
+

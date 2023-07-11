@@ -192,7 +192,7 @@ body {
 }
 
 #generatedImage {
-   
+
     width: 50%;
     height: 50%;
     display: block;
@@ -226,6 +226,7 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #0056b3;
 }
+
 .quiz-container {
     width: 80%;
     text-align: left;
@@ -233,9 +234,9 @@ input[type="submit"]:hover {
     padding: 40px;
     border-radius: 25px;
     border: 2px solid #000;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-  }
-  
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
 .translate-textarea {
     width: 100%;
     min-height: 400px;
@@ -255,4 +256,94 @@ input[type="submit"]:hover {
 
 .disconnected {
     color: red;
+}
+
+#featuredContainer .btn {
+    transition: 0.5s ease;
+    margin: 5px;
+    background-color: green;
+    color: white;
+}
+
+#featuredContainer .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#featuredContainer .card {
+    flex: 1 0 auto;
+    padding: 20px;
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#featuredContainer .col-md-4 {
+    display: flex;
+    flex-direction: column;
+}
+
+#featuredContainer .card-body {
+    text-align: center;
+}
+
+#epubgen body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #ffffff;
+}
+
+#epubgen h1 {
+    text-align: center;
+    padding: 20px;
+    color: #007BFF;
+}
+
+#epubgen form {
+    margin: 20px auto;
+    width: 50%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#epubgen label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#epubgen input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+#epubgen input[type="submit"] {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+#epubgen input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#epubgen p.error {
+    color: red;
+    font-weight: bold;
+}
+
+#progress {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
 }

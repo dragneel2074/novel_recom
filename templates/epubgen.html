@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+Light Novels Epub Converter & Downloader
+{% endblock %}
+{% block title1 %}
+Light Novels Epub Converter
+{% endblock %}
+
+{% block content %}
+
+<div id="epubgen">
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+    <form>
+        <label for="first_chapter_url">First Chapter URL:</label>
+        <input type="text" id="first_chapter_url" name="first_chapter_url" required>
+        <label for="last_chapter_url">Last Chapter URL:</label>
+        <input type="text" id="last_chapter_url" name="last_chapter_url" required>
+        <label for="total chapters">Total Chapters:</label>
+        <input type="text" id="total_chapters" name="total_chapters" required>
+        <input type="submit" id="start" value="Submit">
+    </form>
+    <p id="progress"></p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+        crossorigin="anonymous"></script>
+
+<script>
+    var socket = io.connect('http://127.0.0.1:5000');
+    socket.on('connect', function () {
+        $('#start').click(function (event) {
+            event.preventDefault();
+            socket.emit('start_scrape', {
+                'first_chapter_url': $('#first_chapter_url').val(),
+                'last_chapter_url': $('#last_chapter_url').val(),
+                'total_chapters': $('#total_chapters').val()
+            });
+        });
+    });
+    socket.on('scrape_progress', function (data) {
+        var progress = Math.round((data.current + 1) / data.total * 100);
+        console.log('Progress:', data.current / data.total * 100);
+        $('#progress').text(progress + '%');
+    });
+    socket.on('scrape_complete', function (message) {
+        alert(message);
+    });
+    socket.on('download_ready', function (filename) {
+        window.location.href = '/download/' + filename;
+    });
+    socket.on('error', function (message) {
+        alert('Error: ' + message);
+    });
+
+</script>
+{% endblock %}
