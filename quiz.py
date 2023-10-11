@@ -7,6 +7,10 @@ from sqlalchemy.exc import IntegrityError
 from urllib.parse import unquote
 from werkzeug.exceptions import BadRequest, NotFound
 
+
+
+
+
 def load_question_from_row(row, id):
     if len(row) != 6:
         raise ValueError(
@@ -28,6 +32,7 @@ def load_questions(directory):
     question_sets = {}
     for filename in os.listdir(directory):
         if filename.endswith('.csv'):
+            new_filename = filename.replace('-', ' ')
             filepath = os.path.join(directory, filename)
             question_sets[filename[:-4]] = load_questions_from_file(filepath)
     return question_sets
@@ -137,6 +142,6 @@ def result(user_id, quiz_name):
 def get_top_scores():
     return db.session.query(QuizResult.quiz_topic, User.name, QuizResult.score)\
         .join(User)\
-        .order_by(QuizResult.score.desc())\
+        .order_by(QuizResult.id.desc())\
         .limit(30)\
         .all()

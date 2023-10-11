@@ -1,14 +1,15 @@
 from urllib.parse import urlparse
 from main import app
 import os
+import time
 import re
 import random
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, render_template, request, redirect, send_file, send_from_directory
+from flask import Flask, render_template, request, redirect, send_file, send_from_directory, jsonify
 import ebooklib.epub as epub
 from urllib.parse import urljoin
-from main import socketio, emit
+
 
 USER_AGENTS = [
     # Add a list of User-Agent strings here
@@ -27,112 +28,109 @@ USER_AGENTS = [
 ]
 
 
-@app.route('/web-novel-converter')
-def epubgen():
-    print("Connected")
+@app.route('/web-novel-converter', methods=['POST', 'GET'])
+def scrape_and_download():
+    if request.method == 'POST':
+        data = request.get_json()
+        novel_name = data.get('novel_name')
+        first_chapter_url = data.get('first_chapter_url')
+        last_chapter_url = data.get('last_chapter_url')
+        total_chapters = data.get('total_chapters')
+
+        if not first_chapter_url or not last_chapter_url:
+            return jsonify({'error': 'Please enter the URLs of the novel.'}), 400
+
+        if not is_valid_url(first_chapter_url) or not is_valid_url(last_chapter_url):
+            return jsonify({'error': 'The provided URLs are not valid.'}), 400
+
+        novel = epub.EpubBook()
+        novel.set_title(novel_name)
+        novel.add_author("Unknown")
+
+        chapters = []
+        # Create a list to hold your table of contents
+        toc = []
+
+        # Create a list to hold your spine
+        spine = ['nav']
+
+        current_url = first_chapter_url
+        chapter_count = 0
+        source_scrapers = {
+            'lightnovelpub': scrape_lightnovelpub_chapter_content,
+            'royalroad': scrape_chapter_content,
+            'bronovel': scrape_bronovel_chapter_content,
+            'noveljk': scrape_novelijk_chapter_content,
+            'novelxo': scrape_novelxo_chapter_content
+            # Add more sources and functions as needed
+        }
+        try:
+            while current_url != last_chapter_url:
+                headers = {'User-Agent': random.choice(USER_AGENTS)}
+                try:
+                    source = get_source_from_url(current_url)
+                    if source in source_scrapers:
+                        scraper_function = source_scrapers[source]
+                        chapter_content, chapter_title, next_url = scraper_function(
+                            current_url, headers)
+                    else:
+                        return jsonify({'error': 'site not supported'}), 400
+
+                    if chapter_content is None:
+                        return jsonify({'error': f'Failed to scrape content from the URL: {next_url}'}), 400
+
+                    add_chapter_to_book(novel, chapter_title,
+                                        chapter_content, chapters, toc)
+                    print('Emitting scrape_progress event')
+                    chapter_count += 1
+                # if chapter_count >= 40:
+                #     break
+                    print(current_url)
+                    print(last_chapter_url)
+                    # if current_url == last_chapter_url:
+                    #     break
+                    current_url = next_url
+            # time.sleep(5)
+                except Exception as e:
+                    # Handle exception and move to next chapter
+                    print(
+                        f"Error occurred while scraping chapter {chapter_count}: {str(e)}")
+                    break
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+        finally:
+            novel.add_item(epub.EpubNcx())
+            novel.add_item(epub.EpubNav())
+
+            novel.toc = toc
+            novel.spine = ['nav'] + chapters
+
+            save_path = os.path.join(os.getcwd(), 'downloads')
+            os.makedirs(save_path, exist_ok=True)
+
+            filename = f'{novel_name}.epub'
+            try:
+                epub.write_epub(os.path.join(save_path, filename), novel, {})
+            except Exception as e:
+                return jsonify({'error': f'An error occurred during the epub file generation: {str(e)}'}), 500
+
+            print('Emitting scrape_complete event')
+            return jsonify({'message': 'Scraping complete!', 'filename': filename}), 200
+
     return render_template('epubgen.html')
 
 
-@socketio.on('start_scrape')
-def scrape_and_download(data):
-    first_chapter_url = data.get('first_chapter_url')
-    last_chapter_url = data.get('last_chapter_url')
-    total_chapters = data.get('total_chapters')
-    print(total_chapters)
-
-    if not first_chapter_url or not last_chapter_url:
-        emit('error', 'Please enter the URLs of the novel.')
-        return
-
-    if not is_valid_url(first_chapter_url) or not is_valid_url(last_chapter_url):
-        emit('error', 'The provided URLs are not valid.')
-        return
-
-    # Extract the novel title
-    if 'lightnovelpub' or 'royalroad' or 'bronovel' in first_chapter_url:
-        novel_title_first = re.search(r'/novel/([\w-]+)/', first_chapter_url)
-        novel_title_last = re.search(r'/novel/([\w-]+)/', last_chapter_url)
-
-    else:
-        emit('error', f'We don\'t support this site yet: {first_chapter_url}')
-        return
-
-    if novel_title_first and novel_title_last:
-        novel_title_first = novel_title_first.group(1)
-        novel_title_last = novel_title_last.group(1)
-    else:
-        emit('error', 'Failed to extract novel title from the URLs.')
-        return
-
-    if novel_title_first != novel_title_last:
-        emit('error', 'First chapter URL and last chapter URL do not belong to the same novel.')
-        return
-
-    print(novel_title_first)
-
-    novel = epub.EpubBook()
-    novel.set_title(novel_title_first)
-    novel.add_author("Unknown")
-
-    chapters = []
-    # Create a list to hold your table of contents
-    toc = []
-
-    # Create a list to hold your spine
-    spine = ['nav']
-
-    current_url = first_chapter_url
-    chapter_count = 0
-    while True:
-        headers = {'User-Agent': random.choice(USER_AGENTS)}
-        if 'lightnovelpub' in current_url:
-            chapter_content, chapter_title, next_url = scrape_lightnovelpub_chapter_content(
-                current_url, headers)
-        elif 'royalroad' in current_url:
-            chapter_content, next_url, chapter_title = scrape_chapter_content(
-                current_url, headers)
-        elif 'bronovel' in current_url:
-            chapter_content, chapter_title, next_url = scrape_bronovel_chapter_content(
-                current_url, headers)
-
-        else:
-            emit('error', 'site not supported')
-            return render_template('epubgen.html', error=f'We don\'t support this site yet: {next_url}')
-        if chapter_content is None:
-            return render_template('epubgen.html', error=f'Failed to scrape content from the URL: {next_url}')
-
-        add_chapter_to_book(novel, chapter_title,
-                            chapter_content, chapters, toc)
-        print('Emitting scrape_progress event')
-        emit('scrape_progress', {
-             'current': chapter_count, 'total': total_chapters})
-        chapter_count += 1
-        if chapter_count >= 40:
-            break
-        if current_url == last_chapter_url:
-            break
-        current_url = next_url
-        socketio.sleep(0.1)
-
-    novel.add_item(epub.EpubNcx())
-    novel.add_item(epub.EpubNav())
-
-    novel.toc = toc
-    novel.spine = ['nav'] + chapters
-
-    save_path = os.path.join(os.getcwd(), 'downloads')
-    os.makedirs(save_path, exist_ok=True)
-
-    filename = f'{novel_title_first}.epub'
-    try:
-        epub.write_epub(os.path.join(save_path, filename), novel, {})
-    except Exception as e:
-        return render_template('epubgen.html', error=f'An error occurred during the epub file generation: {str(e)}')
-
-    emit('scrape_complete', 'Scraping complete!')
-    print('Emitting scrape_complete event')
-    emit('download_ready', filename)
-    print('Emitting download_ready event')
+def get_source_from_url(url):
+    if 'lightnovelpub' in url:
+        return 'lightnovelpub'
+    elif 'bronovel' in url:
+        return 'bronovel'
+    elif 'novelijk' in url:
+        return 'novelijk'
+    elif 'novelxo' in url:
+        return 'novelxo'
+    # Add more sources here as needed
+    return None
 
 
 def is_valid_url(url):
@@ -155,9 +153,9 @@ def scrape_chapter_content(url, headers):
         next_url = find_next_url(url, soup)
 
         if chapter_content is not None:
-            return str(chapter_content), next_url, chapter_title
+            return str(chapter_content), chapter_title, next_url
         else:
-            return None, None
+            return None, None, None
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return None, None
@@ -179,78 +177,113 @@ def find_next_url(base_url, soup):
         print("Next chapter button not found.")
 
 
-def scrape_lightnovelpub_chapter_content(url, headers):
+def scrape_chapter_content(url, headers, title_selector, content_selector, next_url_selector):
     try:
-
-        # Send a GET request to the URL
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        # Parse the HTML content of the page with BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Extract the chapter content
-        chapter_content_div = soup.find('div', id='chapter-container')
-        chapter_content = str(
-            chapter_content_div) if chapter_content_div else None
-
         # Extract the chapter title
-        chapter_title_span = soup.find('span', class_='chapter-title')
-        chapter_title = chapter_title_span.text.strip(
-        ) if chapter_title_span else 'Unknown Chapter'
+        chapter_title = soup.select_one(title_selector)
+        chapter_title = chapter_title.text.strip(
+        ) if chapter_title else "Chapter Title Not Found"
 
-        # Extract the next chapter URL
-        next_chapter_link = soup.find('a', rel='next')
+        # Extract the chapter content
+        chapter_content_elements = soup.select(content_selector)
+        chapter_content = '<br><br>'.join(
+            [p.get_text(strip=True) for p in chapter_content_elements if p.name == 'p'])
+
+        # Extract the next chapter link
+        next_chapter_link = soup.select_one(next_url_selector)
         next_url = urljoin(
             url, next_chapter_link['href']) if next_chapter_link else None
 
         return chapter_content, chapter_title, next_url
-
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
         return None, None, None
+
+
+def scrape_lightnovelpub_chapter_content(url, headers):
+    return scrape_chapter_content(
+        url,
+        headers,
+        title_selector='span.chapter-title',
+        content_selector='div#chapter-container p',
+        next_url_selector='a[rel="next"]'
+    )
 
 
 def scrape_bronovel_chapter_content(url, headers):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Extract the chapter title
-        chapter_title = soup.find('div', class_='read-container').find('h1')
-        if chapter_title is not None:
-            chapter_title = chapter_title.text
-        else:
-            chapter_paragraphs = soup.find('div', class_='read-container').find_all('p')
-            for paragraph in chapter_paragraphs:
-                if paragraph.text.strip().startswith('Chapter'):
-                    chapter_title = paragraph.text.strip()
-                    break
-            else:
-                chapter_title = "Chapter Title Not Found"
-
-    # Extract the chapter content
-        chapter_content_div = soup.find('div', class_='read-container')
-        chapter_content_paragraphs = chapter_content_div.find_all('p')
-        # chapter_content = ' '.join(
-        #     [p.text for p in chapter_content_paragraphs])
-      
-        chapter_content = '\n'.join([p.get_text(strip=True) for p in chapter_content_paragraphs])
+    return scrape_chapter_content(
+        url,
+        headers,
+        title_selector='div.read-container h1',
+        content_selector='div.read-container p, div.read-container div',
+        next_url_selector='div.nav-next a.btn.next_page'
+    )
 
 
+def scrape_novelijk_chapter_content(url, headers):
+    return scrape_chapter_content(
+        url,
+        headers,
+        title_selector='div.epcontent.entry-content h2',
+        content_selector='div.epcontent.entry-content p, div.epcontent.entry-content div',
+        next_url_selector='div.bottomnav a[rel="next"]'
+    )
 
-    # Extract the next chapter link
-        next_chapter_link_div = soup.find('div', class_='nav-next')
-        next_url = next_chapter_link_div.find(
-            'a', class_='btn next_page')['href']
 
-        return chapter_content, chapter_title, next_url
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
-        return None, None, None
+def scrape_novelxo_chapter_content(url, headers):
+    return scrape_chapter_content(
+        url,
+        headers,
+        title_selector='h2.chapter-title',
+        content_selector='div.readerbody-wg div.clear.entry-content p',
+        next_url_selector='div.readernav-wg a.btn.next'
+    )
 
+
+# def scrape_bronovel_chapter_content(url, headers):
+#     try:
+#         response = requests.get(url)
+#         response.raise_for_status()
+
+#         soup = BeautifulSoup(response.text, 'html.parser')
+
+#     # Extract the chapter title
+#         chapter_title = soup.find('div', class_='read-container').find('h1')
+#         if chapter_title is not None:
+#             chapter_title = chapter_title.text
+#         else:
+#             chapter_paragraphs = soup.find(
+#                 'div', class_='read-container').find_all('p')
+#             for paragraph in chapter_paragraphs:
+#                 if paragraph.text.strip().startswith('Chapter'):
+#                     chapter_title = paragraph.text.strip()
+#                     break
+#             else:
+#                 chapter_title = "Chapter Title Not Found"
+
+#     # Extract the chapter content
+#         chapter_content_div = soup.find('div', class_='read-container')
+#         chapter_content_paragraphs = chapter_content_div.find_all('p')
+
+#         chapter_content_paragraphs = chapter_content_div.find_all(['p', 'div'])
+
+#         chapter_content = '<br><br>'.join(
+#             [p.get_text(strip=True) for p in chapter_content_paragraphs if p.name == 'p'])
+
+#     # Extract the next chapter link
+#         next_chapter_link_div = soup.find('div', class_='nav-next')
+#         next_url = next_chapter_link_div.find(
+#             'a', class_='btn next_page')['href']
+
+#         return chapter_content, chapter_title, next_url
+#     except requests.exceptions.RequestException as e:
+#         print(f"An error occurred: {e}")
+#         return None, None, None
 
 def add_chapter_to_book(book, title, content, chapters, toc):
     c1 = epub.EpubHtml(
@@ -272,10 +305,6 @@ def get_chapter_title(content):
         return 'Unknown Chapter'
 
 
-# @app.route('/download-epub/<filename>')
-# def download(filename):
-#     file_path = os.path.join(os.getcwd(), 'downloads', filename)
-#     return send_file(file_path, as_attachment=True)
 @app.route('/download/<filename>')
 def download(filename):
     file_path = os.path.join(os.getcwd(), 'downloads', filename)

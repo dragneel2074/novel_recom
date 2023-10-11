@@ -13,7 +13,9 @@ Light Novels Epub Converter
     {% if error %}
     <p class="error">{{ error }}</p>
     {% endif %}
-    <form>
+    <form id="scrapeForm">
+        <label for="first_chapter_url">Novel Name:</label>
+        <input type="text" id="novel_name" name="novel_name" required>
         <label for="first_chapter_url">First Chapter URL:</label>
         <input type="text" id="first_chapter_url" name="first_chapter_url" required>
         <label for="last_chapter_url">Last Chapter URL:</label>
@@ -21,45 +23,78 @@ Light Novels Epub Converter
         <label for="total chapters">Total Chapters:</label>
         <input type="text" id="total_chapters" name="total_chapters" required>
         <input type="submit" id="start" value="Submit">
+        <br>
+       
     </form>
-    <p id="progress"></p>
+    <p id="epubstatus"></p>
+    <p id="epubprogress"></p>
 </div>
-
-{% endblock %}
+<div id="epubgenp">
+    <p>Here's a description on how to use the Epub Generator:</p>
+  
+    <p>The Epub Generator currently supports novels from bronovel.com. Ensure that the novel you want to generate an EPUB for is available on bronovel.com.</p>
+  
+    <p>Identify the range of chapters you want to include in the EPUB. For example, if you want to include chapters 5 to 50, find the URL of chapter 5 and chapter 50.</p>
+  
+    <p>Open the Epub Generator tool and locate the input fields labeled "First Chapter URL" and "Last Chapter URL". Enter the URL of chapter 5 in the "First Chapter URL" field and the URL of chapter 50 in the "Last Chapter URL" field.</p>
+  
+    <p>Determine the total number of chapters included in the range. In this case, there are 45 chapters (chapter 5 to chapter 50). Enter this number in the input field labeled "Total Chapters".</p>
+  
+    <p>After entering the necessary information, click on the "Submit" button to start the EPUB generation process.</p>
+  
+    <p>The Epub Generator will begin retrieving the chapters from the provided URLs. Please be patient as each chapter may take approximately 5 seconds to process.</p>
+  
+    <p>Once all the chapters have been retrieved and processed, the Epub Generator will generate the EPUB file. You will be prompted to download the EPUB file.</p>
+  
+    <p>Click on the download link to save the EPUB file to your device.</p>
+  
+    <p>The time required to generate the EPUB file depends on the number of chapters included. In this case, with 45 chapters, the process may take approximately 3 minutes and 45 seconds.</p>
+  
+    <p>Enjoy reading your novel in EPUB format!</p>
+  
+    <p><strong>Please note that the Epub Generator currently supports bronovel.com, and the provided instructions are specific to that platform. Ensure that you have the necessary permissions and comply with any terms of use or copyright restrictions when generating EPUB files.</strong></p>
+  </div>
+  
+  {% endblock %}
 
 {% block scripts %}
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
-        integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
-        crossorigin="anonymous"></script>
 
 <script>
-    var socket = io.connect('http://127.0.0.1:5000');
-    socket.on('connect', function () {
-        $('#start').click(function (event) {
-            event.preventDefault();
-            socket.emit('start_scrape', {
-                'first_chapter_url': $('#first_chapter_url').val(),
-                'last_chapter_url': $('#last_chapter_url').val(),
-                'total_chapters': $('#total_chapters').val()
-            });
+    $('#scrapeForm').submit(function (event) {
+        event.preventDefault();
+        var novel_name = $('#novel_name').val();
+        var first_chapter_url = $('#first_chapter_url').val();
+        var last_chapter_url = $('#last_chapter_url').val();
+        var total_chapters = $('#total_chapters').val();
+        $('#epubstatus').text('Epub Generating...wait' + total_chapters * 5 + 'seconds');
+        $.ajax({
+            url: 'http://127.0.0.1:5000/web-novel-converter',  // replace with your server-side function URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'novel_name': novel_name,
+                'first_chapter_url': first_chapter_url,
+                'last_chapter_url': last_chapter_url,
+                'total_chapters': total_chapters
+            }),
+            success: function (response) {
+                // handle success
+                // update progress
+                $('#epubprogress').text('Epub Generated!');
+                window.location.href = '/download/' + response.filename;
+            },
+            error: function (error) {
+                $('#epubprogress').text('Some Error Occured!');
+                console.log(error);  // Log the entire error object
+                if (error.responseJSON) {
+                    // If the server responded with a JSON message, display that
+                    alert('Error: ' + error.responseJSON.error);
+                } else {
+                    // Otherwise, just display the status text
+                    alert('Error: ' + error.statusText);
+                }
+            }
         });
     });
-    socket.on('scrape_progress', function (data) {
-        var progress = Math.round((data.current + 1) / data.total * 100);
-        console.log('Progress:', data.current / data.total * 100);
-        $('#progress').text(progress + '%');
-    });
-    socket.on('scrape_complete', function (message) {
-        alert(message);
-    });
-    socket.on('download_ready', function (filename) {
-        window.location.href = '/download/' + filename;
-    });
-    socket.on('error', function (message) {
-        alert('Error: ' + message);
-    });
-
 </script>
 {% endblock %}

@@ -342,8 +342,115 @@ input[type="submit"]:hover {
     font-weight: bold;
 }
 
-#progress {
+#epubstatus {
     text-align: center;
     font-size: 1.2em;
     font-weight: bold;
+    color: #0056b3;
+}
+
+#epubprogress {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#epubgenp {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+}
+
+#epubgenp p {
+    margin: 10px 0;
+}
+
+#epubgenp p:first-child {
+    font-weight: bold;
+}
+
+#epubgenp p:last-child {
+    margin-bottom: 0;
+}
+
+
+#indexguide {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    margin: auto;
+    width: 80%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#indexguide h2 {
+    color: #333;
+    font-size: 28px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+#indexguide h3 {
+    color: #666;
+    font-size: 24px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+#indexguide h4 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#indexguide p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+#indexguide ol {
+    margin-left: 20px;
+    list-style-type: decimal;
+}
+
+/* Sentiment Analysis Emojis */
+
+
+#sentimentResults {
+    display: flex;
+    justify-content: center;
+    /* Center the items horizontally */
+    align-items: center;
+    /* Center the items vertically */
+    margin-bottom: 30px;
+    font-size: 24px;
+    /* Spacing between the emojis and the image */
+}
+
+#sentimentResults p {
+    margin: 0 20px;
+    /* Adds space between the two emojis */
+}
+
+#wordCloudImage {
+    display: block;
+    margin: auto;
+    /* Center the image horizontally */
+}
+
+.sentiment-emoji {
+    font-size: 50px;
+    /* Bigger emoji size */
+    margin-right: 10px;
+    /* Spacing after the emoji */
+    vertical-align: middle;
+    /* Align with the text */
 }

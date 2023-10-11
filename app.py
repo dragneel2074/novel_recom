@@ -1,21 +1,9 @@
-from main import app, sitemapper, socketio
-import contact
-import quiz
-import translate
-import epubgen
-import os
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, send_from_directory
+from main import app, sitemapper
+from flask import render_template, request, jsonify, flash, redirect, url_for, send_from_directory
 import random
-import pandas as pd
-import numpy as np
 import pickle
-from aws_request_signer import AwsRequestSigner
-import requests
-import json
-import hashlib
-from imaginepy import Imagine, Style, Ratio
-import uuid
-import time
+from werkzeug.middleware.proxy_fix import ProxyFix
+from sentiment import get_sentiment
 
 
 # app = Flask(__name__)
@@ -23,70 +11,57 @@ app.secret_key = 'your_secret_key_here'
 
 # load the data
 novel_list = pickle.load(
-    open('D:/projects/flask - Copy/data/novel_list.pkl', 'rb'))
+    open('D:/projects/recomapp/data/novel_list.pkl', 'rb'))
 novel_list['english_publisher'] = novel_list['english_publisher'].fillna(
     'unknown')
-print(novel_list.columns)
 name_list = novel_list['name'].values
 similarity = pickle.load(
-    open('D:/projects/flask - Copy/data/similarity.pkl', 'rb'))
+    open('D:/projects/recomapp/data/similarity.pkl', 'rb'))
 
 
 @sitemapper.include(lastmod="2023-06-21")
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    recommendations = None
-   # amazon_products = None
-    selected_novel_name = request.form.get(
-        'selected_novel_name') or request.args.get('selected_novel_name') or None
-    slider_value = request.form.get('slider')
-    if slider_value is not None:
-        slider_value = int(slider_value)
-    else:
-        slider_value = 1  # Assign a default value of 1
-    if request.method == 'POST':
-        action = request.form.get('action1') or request.form.get('action2')
-        selected_novel_name = request.form.get('selected_novel_name') if request.form.get(
-            'selected_novel_name') else 'Mother of Learning'
-        if action == '💡 Recommend':
-            recommendations = recommend(selected_novel_name, slider_value)
-            if recommendations is None:
-                # Option 1: Show an error message to the user where novel is not found in database
-                flash("Novel not found in our database. Please try another one.")
-                return redirect(url_for('home'))
-          #  recommendation_names = [rec['name'] for rec in recommendations]
-           # recommendation_images = [rec['image_url'] for rec in recommendations]
-           # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
+    # Initialize selected_novel_name without any default value
+    selected_novel_name = None
 
-          #  amazon_products = get_amazon_products(selected_novel_name)
-        elif action == '🎲 Random':
-            recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],
-                                'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
-            # recommendation_names = [rec['name'] for rec in recommendations]
-            # recommendation_images = [rec['image_url'] for rec in recommendations]
-            # recommendation_pub = [rec['english_publisher'] for rec in recommendations]
-          #  amazon_products = get_amazon_products('new light novels')
-    elif request.method == 'GET':
-        # selected_novel_name = request.args.get('selected_novel_name')
-        if selected_novel_name:
-            selected_novel_name = request.args.get('selected_novel_name') if request.args.get(
-                'selected_novel_name') else 'Mother of Learning'
+    if request.method == 'POST':
+        action = request.form.get('action1') or request.form.get('action2') or request.form.get('action3')
+        selected_novel_name = request.form.get('selected_novel_name')
         slider_value = request.form.get('slider')
         if slider_value is not None:
             slider_value = int(slider_value)
         else:
             slider_value = 1  # Assign a default value of 1
+
+        recommendations = None
+
+        if action == '💡 Recommend':
             recommendations = recommend(selected_novel_name, slider_value)
-            # if recommendations:
-            #     recommendation_names = [rec['name'] for rec in recommendations]
-            #     recommendation_images = [rec['image_url']
-            #                              for rec in recommendations]
-            #     recommendation_pub = [rec['english_publisher']
-            #                           for rec in recommendations]
+            if recommendations is None:
+                flash("Novel not found in our database. Please try another one.")
+                return redirect(url_for('home'))
+        elif action == '🎲 Random':
+            recommendations = [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0],
+                                'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random.sample(list(name_list), 9)]
+    elif request.method == 'GET':
+        selected_novel_name = request.args.get('selected_novel_name')  # This will be None if there's no parameter
+        slider_value = request.form.get('slider')
+        if slider_value is not None:
+            slider_value = int(slider_value)
+        else:
+            slider_value = 1
 
-          #  amazon_products = get_amazon_products(selected_novel_name)
+        recommendations = None
+        if selected_novel_name:  # Only recommend if a novel name is provided
+            recommendations = recommend(selected_novel_name, slider_value)
 
-    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name, amazon_products=[])
+    # If no novel name is provided, default to 'Mother of Learning'
+    if not selected_novel_name:
+        selected_novel_name = 'Mother of Learning'
+
+    return render_template('index.html', name_list=sorted(name_list), recommendations=recommendations, selected_novel_name=selected_novel_name,)
+
 
 
 def recommend(novel, slider_start):
@@ -111,6 +86,23 @@ def random_selection():
         return jsonify({'recommendations': [{'name': novel, 'image_url': novel_list[novel_list['name'] == novel]['image_url'].values[0], 'english_publisher': novel_list[novel_list['name'] == novel]['english_publisher'].values[0]} for novel in random_novels]})
 
 
+@app.route('/sentiment-analysis', methods=['POST'])
+def analyze_sentiment():
+    novel_name = request.form.get('novel_name')
+    try:
+        positive, negative, wordcloud = get_sentiment(novel_name)
+    except Exception as e:
+        print(e)
+        return jsonify({'error': 'An error occurred during sentiment analysis.'})
+
+    # Return analysis results
+    return jsonify({
+        'positive': positive,
+        'negative': negative,
+        'wordcloud': wordcloud
+    })
+
+
 @sitemapper.include(lastmod="2023-06-10")
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
@@ -119,160 +111,24 @@ def autocomplete():
     return jsonify(results)
 
 
-# chatGPT
-# def chat(user_input):
-#     url = 'https://api.pawan.krd/v1/chat/completions'
-#     job = "You are NovelNavigator, an AI assistant. When given a novel's name, your task is to recommend 2 similar novels, such as Release that Witch and make 'Release that Witch linkable' clickable HTML links. Link the titles to the website where they can be found.if the source is webnovel, link with https://tinyurl.com/webnovel10 url. If unsure of the source, link them to amazon. Your output should only consist of the clickable novel titles, nothing else. Ensure the titles and links fit within 100 tokens."
-
-#     headers = {
-#         'Authorization': 'Bearer pk-NslFMEokdTmDEAwoQDJVfLsZQPHRPxlcAFKSpyIJkkaFCFxm',
-#         'Content-Type': 'application/json'
-#     }
-#     data = {
-#         "model": "gpt-3.5-turbo",
-#         "max_tokens": 100,
-#         "messages": [
-#             {
-#                 "role": "system",
-#                 "content": job
-#             },
-#             {
-#                 "role": "user",
-#                 "content": user_input
-#             }
-#         ]
-#     }
-#     response = requests.post(url, headers=headers, data=json.dumps(data))
-#     print(response.text)
-#     return response.json()
-
-def chat(user_input):
-    url = 'https://api.pawan.krd/v1/completions'
-    job = f"As a connoisseur of Chinese, Japanese, and English Web Novels, based on: {user_input}, recommend 3 novels with brief overviews, making sure to align with the user's interests."
-
-    headers = {
-        'Authorization': 'Bearer pk-xsmNJWGSvHjJMuQtmKbYYkluOKwdNHqCGDAYRZdTEgLcSIiv',
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "model": "text-davinci-003",
-        "max_tokens": 256,
-        "prompt": job,
-        "temperature": 0.2,
-
-    }
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    print(response.text)
-    return response.json()
-
-
-@app.route('/novelmateai', methods=['POST'])
-def novelmateai():
-    try:
-        selected_novel_name = request.form.get('selected_novel_name')
-        response = chat(selected_novel_name)
-        bot_output = response['choices'][0]['text']
-        print(bot_output)
-        return jsonify({'message': bot_output})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-
-@app.route('/ai-anime-image-generator', methods=['POST'])
-def main():
-    # Generate a UUID
-
-    image_id = uuid.uuid4()
-
-# Convert the UUID to a string and use it in the filename
-    image_filename = f"static/images/generated/{image_id}.jpeg"
-    imagine = Imagine()
-
-    img_data = imagine.sdprem(
-        prompt=request.form.get('selected_novel_name'),
-
-        style=Style.ABSTRACT_VIBRANT,
-        ratio=Ratio.RATIO_16X9
-    )
-
-    if img_data is None:
-        print("An error occurred while generating the image.")
-        return jsonify(error="An error occurred while generating the image.")
-
-    img_data = imagine.upscale(image=img_data)
-
-    if img_data is None:
-        print("An error occurred while upscaling the image.")
-        return jsonify(error="An error occurred while upscaling the image.")
-
-    try:
-        with open(image_filename, mode="wb") as img_file:
-            img_file.write(img_data)
-    except Exception as e:
-        print(f"An error occurred while writing the image to file: {e}")
-        return jsonify(error=f"An error occurred while writing the image to file: {e}")
-
-     # Return a JSON response with the image URL
-    return jsonify(image_url=f"/{image_filename}")
-
-
 @sitemapper.include(lastmod="2023-06-10")
 @app.route('/top-picks')
 def top_picks():
     return render_template("top-picks.html")
 
 
-# AWS Configuration
-HOST = "webservices.amazon.com"
-URI_PATH = "/paapi5/searchitems"
-ACCESS_KEY = ''
-SECRET_KEY = ''
-REGION = "us-east-1"
-request_signer = AwsRequestSigner(
-    REGION, ACCESS_KEY, SECRET_KEY, "ProductAdvertisingAPI")
-
-
-def sign_aws_request(payload):
-    payload_hash = hashlib.sha256(json.dumps(payload).encode()).hexdigest()
-    headers = {
-        "host": HOST,
-        "content-type": "application/json; charset=UTF-8",
-        "x-amz-target": "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems",
-        "content-encoding": "amz-1.0"
-    }
-    headers.update(request_signer.sign_with_headers(
-        "POST", f"https://{HOST}{URI_PATH}", headers, payload_hash))
-    return headers
-
-
-def get_amazon_products(keyword):
-    payload = {
-        "Keywords": keyword,
-        "Resources": ["Images.Primary.Large", "ItemInfo.Title"],
-        "PartnerTag": "dragneelclub-20",
-        "PartnerType": "Associates",
-        "Marketplace": "www.amazon.com"
-    }
-
-    headers = sign_aws_request(payload)
-
-    response = requests.post(
-        f"https://{HOST}{URI_PATH}", headers=headers, json=payload, verify=False)
-    time.sleep(0.1)
-    if response.status_code == 200:
-        return response.json().get("SearchResult", {}).get("Items", None)
-    else:
-        return None
-
-
+@sitemapper.include(lastmod="2023-07-09")
 @app.route('/robots.txt')
-def static_from_root():
+def static_from_root_robots():
     return send_from_directory(app.static_folder, request.path[1:])
 
-@app.route('/webnovel-redeem-codes')
-def codes():
-    return render_template('codes.html')
+
+@sitemapper.include(lastmod="2023-07-15")
+@app.route('/ads.txt')
+def static_from_root_ads():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.run(debug=True)

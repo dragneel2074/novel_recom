@@ -1,19 +1,19 @@
-from flask import Flask
+from flask import Flask, request, app
 import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import g
 from flask_sitemapper import Sitemapper
-from flask_socketio import SocketIO, emit
-
 
 
 sitemapper = Sitemapper()
 # from flask_migrate import Migrate
 
 
+    
+
+
 app = Flask(__name__)
 sitemapper.init_app(app)
-socketio = SocketIO(app)
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -31,6 +31,8 @@ def before_request_func():
         db.create_all()  # Create the database tables before the first request
     else:
         g.is_first_request = False
+    if request.path.startswith('/'):
+        request.path = request.path.replace('%20', '-')
 
 
 class User(db.Model):
@@ -54,4 +56,5 @@ class QuizResult(db.Model):
 @app.route('/sitemap.xml')
 def sitemap():
     return sitemapper.generate()
+
 

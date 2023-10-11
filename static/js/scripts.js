@@ -1,113 +1,7 @@
-$(function () {
-    $("#selected_novel_name").autocomplete({
-        source: '/autocomplete',
-        minLength: 2,
-        select: function (event, ui) {
-            $("#selected_novel_name").val(ui.item.value);
-        }
-    });
-});
-$("#randomButton").onclick = function () {
-    //  document.getElementById("loadMoreButton").style.display = "none";
-    $('#loadMoreButton').hide();
-
-}
 
 
 
 $(document).ready(function () {
-
-
-    $("#novelmateaiButton").click(function (event) {
-        event.preventDefault();
-
-        var selectedNovelName = $('#selected_novel_name').val();
-        $.ajax({
-            url: '/novelmateai',
-            type: 'POST',
-            dataType: 'json',  // Expect a JSON response
-
-            data: { selected_novel_name: selectedNovelName },
-            success: function (response) {
-                $("#loader").show();
-                // Display the response message
-                if (response.hasOwnProperty('error')) {
-                    var message = "An Error Occured! Try sometime later"
-                    $('#botOutput').html(formattedMessage);
-                    //  $('#botOutput').html(response.message);
-                    $('#novelmateaiResponse').show();
-
-                    $("#loader").hide();
-                    return
-                }
-
-                // var lines = response.message.split('\n');
-                // // Format the response message
-                // var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
-
-                var lines = response.message.split('\n');
-                var formattedMessage = '<p>' + lines.join('</p><p>') + '</p>';
-
-                // Append the link at the end
-                formattedMessage += '<p>You can read these here: <a href="https://nobleradar.com/go/webnovel" target="_blank">www.nobleradar.com/go/webnovel</a></p>';
-
-                // Display the formatted message
-                $('#botOutput').html(formattedMessage);
-                //  $('#botOutput').html(response.message);
-                $('#novelmateaiResponse').show();
-
-                $("#loader").hide();  // Hide the loader after the response is displayed
-
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // Log the error to the console
-                console.error(
-                    "The following error occurred: " +
-                    textStatus, errorThrown
-                );
-                $("#loader").hide();
-
-                // Alert the user
-                alert('Something went wrong, please try again');
-            }
-        });
-    });
-
-    $("#imagegenButton").click(function (event) {
-        event.preventDefault();
-
-        var selectedNovelName = $('#selected_novel_name').val();
-        $.ajax({
-            url: '/ai-anime-image-generator',
-            type: 'POST',
-            dataType: 'json', // Expect a JSON response
-            data: { selected_novel_name: selectedNovelName },
-            success: function (response) {
-                $("#loader").show();
-                var img = $('<img id="generatedImage">');
-
-                // Set the src attribute of the img tag to the URL of the generated image
-                img.attr('src', response.image_url);
-
-                // Append the img tag to the container
-                $('#imageContainer').html(img);
-                // Set the src attribute of the img tag to the URL of the generated image
-                //   $('#generatedImage').attr('src', response.image_url);
-
-                $("#loader").hide();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $("#loader").hide();
-                // Log the error to the console
-                console.error(
-                    "The following error occurred: " +
-                    textStatus, errorThrown
-                );
-            }
-        });
-    });
-
-
 
     $(".submitBtn").click(function () {
 
@@ -196,19 +90,7 @@ $(document).ready(function () {
 });
 
 
-// top picks
 
-// $(document).ready(function () {
-//     $('.btn-link').on('click', function () {
-//         var current = $(this).attr('data-target');
-//         if($(current).hasClass('show')){
-//             $(current).collapse('hide');
-//         } else {
-//             $('.collapse').collapse('hide');
-//             $(current).collapse('show');
-//         }
-//     });
-// });
 
 var apiKey = localStorage.getItem('apiKey');
 if (apiKey != null) {
@@ -342,3 +224,49 @@ function translateText() {
         });
 }
 
+$(document).ready(function () {
+
+    // Event listener for the sentiment analysis button
+    $("#saButton").click(function () {
+        var selectedNovelName = $('#selected_novel_name').val();
+
+        if (!selectedNovelName.trim()) {
+            alert('Please enter a novel name.');
+            return;
+        }
+
+        // Display a loader or some indication that processing is underway
+        $("#loader").show();
+
+        $.ajax({
+            url: '/sentiment-analysis',
+            type: 'POST',
+            data: { novel_name: selectedNovelName },
+            success: function (response) {
+                // Hide the loader
+                $("#loader").hide();
+
+                // Display the sentiment analysis results
+                if (response.positive) {
+                    // Display the positive percentage with smile emoji
+                    $("#positiveResult").html('<span class="sentiment-emoji">😊</span>' + response.positive + "% Positive");
+                }
+
+                if (response.negative) {
+                    // Display the negative percentage with sad emoji
+                    $("#negativeResult").html('<span class="sentiment-emoji">☹️</span>' + response.negative + "% Negative");
+                }
+
+                if (response.wordcloud) {
+                    // Display the wordcloud image (assuming it's a link to an image)
+                    $("#wordCloudImage").attr("src", response.wordcloud).show();
+                }
+            },
+            error: function (error) {
+                // Handle any errors here. For instance, you can alert the user.
+                $("#errorMessage").text('An error occurred during sentiment analysis.').show();
+            }
+        });
+    });
+
+});

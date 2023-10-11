@@ -17,200 +17,103 @@ Get your top picks here
 </div>
 {% endif %}
 {% endwith %}
-
 <div class="container">
     <form method="POST">
         <div class="form-group">
-            <label for="selected_novel_name">🔎 Choose a Novel to get Recommendations</label>
+            <label for="selected_novel_name">
+                🔎 Choose a Novel to get Recommendations
+            </label>
             <input type="text" id="selected_novel_name" name="selected_novel_name" class="form-control"
                 value="{{selected_novel_name|e}}" placeholder="Enter novel name here">
+            <!-- <input class="form-control" id="selected_novel_name" name="selected_novel_name" placeholder="Enter novel name here" type="text" value="Mother of Learning"/> -->
         </div>
-        <input type="range" id="slider" name="slider" min="1" max="100" value="1">
-
-        <input type="submit" name="action1" value="💡 Recommend" class="btn btn-primary submitBtn">
-        <input type="submit" name="action2" value="🎲 Random" class="btn btn-secondary submitBtn" id="randomButton">
-
-
-        <input type="button" name="action3" value="Ask NovelMateAI" class="btn btn-secondary submitBtn"
-            id="novelmateaiButton">
-        <input type="button" name="action4" value="Generate Image" class="btn btn-secondary submitBtn"
-            id="imagegenButton">
-        <br> <p style="font-size: smaller;">The NovelMate & Image generation services are down!</p>
+        <input id="slider" max="100" min="1" name="slider" type="range" value="1" />
+        <input class="btn btn-primary submitBtn" name="action1" type="submit" value="💡 Recommend" />
+        <input class="btn btn-secondary submitBtn" id="randomButton" name="action2" type="submit" value="🎲 Random" />
+        <input class="btn btn-secondary submitBtn" id="saButton" name="action3" type="button" value="Analysis" />
+        <br />
     </form>
-
 </div>
 <div class="container text-center">
-    <div class="loader" id="loader"></div>
+    <div class="loader" id="loader">
+    </div>
 </div>
-<div id="novelmateaiResponse">
-    <p><b>NovelMate:</b> <span id="botOutput" class="novelmate-output"></span></p>
-
+<!-- Sentiment Analysis Results -->
+<div id="sentimentResults">
+    <p id="positiveResult">
+    </p>
+    <p id="negativeResult">
+    </p>
+  
 </div>
-
-
-
-
-
-
+<img alt="Word Cloud" id="wordCloudImage" style="max-width: 100%;display: none;" />
+<!-- Error Message Display -->
+<div class="alert alert-danger" id="errorMessage" style="display: none;">
+</div>
 {% if recommendations %}
 <div class="container mt-4">
-    <h2>Here are some novels you might enjoy:</h2>
-    <div id="recommendations-row" class="row">
+    <h2>
+        Here are some novels you might enjoy:
+    </h2>
+    <div class="row" id="recommendations-row">
         {% for novel in recommendations %}
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ novel.image_url }}" onerror="imgError(this);" alt="{{ novel.name }}" class="card-img-top">
+                <img alt="{{ novel.name }}" class="card-img-top" onerror="imgError(this);"
+                    src="{{ novel.image_url }}" />
                 <div class="card-body">
-                    <h5 class="card-title"><a href="/?selected_novel_name={{ novel.name }}" class="novel-name-link">{{
-                            novel.name }}</a>
+                    <h5 class="card-title">
+                        <a class="novel-name-link" href="/?selected_novel_name={{ novel.name }}">
+                            {{
+                            novel.name }}
+                        </a>
                     </h5>
                     {% if novel.english_publisher and novel.english_publisher.lower() == "webnovel" %}
-                    <a href="https://www.webnovel.com/" target="_blank" class="btn btn-primary">📖 Read This
-                        Novel</a>
+                    <a class="btn btn-primary" href="https://www.webnovel.com/" target="_blank">
+                        📖 Read This
+                        Novel
+                    </a>
                     {% elif novel.english_publisher.lower() == "dreame" %}
-                    <a href="https://www.dreame.com" target="_blank" class="btn btn-primary">Read the Novel</a>
+                    <a class="btn btn-primary" href="https://www.dreame.com" target="_blank">
+                        Read the Novel
+                    </a>
                     {% elif novel.english_publisher.lower() in ["seven seas","j-novel club", "tentai books","yen
                     press"] %}
-                    <a href="https://www.amazon.com" target="_blank" class="btn btn-primary">Read the
-                        Novel</a>
+                    <a class="btn btn-primary" href="https://www.amazon.com" target="_blank">
+                        Read the
+                        Novel
+                    </a>
                     {% else %}
-                    <a href="https://www.google.com/search?q={{ novel.name }}" target="_blank"
-                        class="btn btn-primary">📖 Read This
-                        Novel</a>
+                    <a class="btn btn-primary" href="https://www.google.com/search?q={{ novel.name }}" target="_blank">
+                        📖 Read This
+                        Novel
+                    </a>
                     {% endif %}
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
-
 </div>
 {% endif %}
 
+{% endblock %}
 
+{% block scripts %}
+<script>
+    $(function () {
+        $("#selected_novel_name").autocomplete({
+            source: '/autocomplete',
+            minLength: 2,
+            select: function (event, ui) {
+                $("#selected_novel_name").val(ui.item.value);
+            }
+        });
+    });
+    $("#randomButton").onclick = function () {
+        //  document.getElementById("loadMoreButton").style.display = "none";
+        $('#loadMoreButton').hide();
 
-{% if amazon_products %}
-<div class="container mt-4">
-    <h2>Check out these Amazon products:</h2>
-    <div class="row">
-        {% for product in amazon_products %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product["ItemInfo"]["Title"]["DisplayValue"] }}</h5>
-                    <center> <img src="{{ product['Images']['Primary']['Large']['URL'] | default('#') }}"
-                            alt="{{ product['ItemInfo']['Title']['DisplayValue'] | default('No Title') }}"
-                            class="card-img-top">
-                        <a href="{{ product['DetailPageURL'] | default('#') }}" class="btn btn-primary">Buy on
-                            Amazon</a>
-                    </center>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-
-<div id="featuredContainer" class="container">
-    <!-- <div class="container"> -->
-    <center>
-        <h3><strong>Featured Web Novels</strong></h3>
-    </center>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <img class="card-img-top" src="/static/images/webnovel/talent swallow.jpg"
-                    alt="Talent Swallowing System">
-                <div class="card-body">
-                    <h5 class="card-title">Talent Swallowing System</h5>
-                    <p class="card-text">In a world teetering on the edge of oblivion, humanity's last hope lies in
-                        their latent talents. A young boy, Leo, wronged by those who should have been heroes, seeks
-                        retribution. With his newfound abilities, he embarks on a quest for justice and truth, vowing to
-                        bring down those who have turned their backs on their duty.</p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_talent-swallowing-system&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F22969003505340005%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Ftalent-swallowing-system_22969003505340005"
-                        class="btn btn-primary">Read This Novel</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img class="card-img-top" src="/static/images/webnovel/stayed at home.png"
-                    alt="I Stayed At Home For A Century, When I Emerged I Was Invincible">
-                <div class="card-body">
-                    <h5 class="card-title">I Stayed At Home For A Century, When I Emerged I Was Invincible</h5>
-                    <p class="card-text">In a fantastical realm, Chu Xuan finds solace in solitude. With a unique system
-                        that rewards his reclusive lifestyle, he grows stronger day by day. As he acquires a myriad of
-                        techniques and abilities, he proves that power can be found in the quietest of places.</p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_i-stayed-at-home-for-a-century-when-i-emerged-i-was-invincible&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F22969003505340005%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Fi-stayed-at-home-for-a-century-when-i-emerged-i-was-invincible_22969003505340005"
-                        class="btn btn-primary">Read This Novel</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img class="card-img-top" src="/static/images/webnovel/three wives.jpg"
-                    alt="My Three Wives Are Beautiful Vampires">
-                <div class="card-body">
-                    <h5 class="card-title">My Three Wives Are Beautiful Vampires</h5>
-                    <p class="card-text">Wronged and turned into a pariah, a man finds a second chance in a magical
-                        realm, reborn as a wolf. Armed with cheats, he embarks on a journey to become the ultimate
-                        predator, proving that even the meek can become the mighty.</p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_my-three-wives-are-beautiful-vampires.&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F20553633305398405%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Fmy-three-wives-are-beautiful-vampires._20553633305398405"
-                        class="btn btn-primary">Read This Novel</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-
-                <img class="card-img-top" src="/static/images/webnovel/boss.png" alt="The Boss Behind The Game">
-                <div class="card-body">
-                    <h5 class="card-title">The Boss Behind The Game</h5>
-                    <p class="card-text">Lu Wu, a game developer with royal underworld lineage, crafts a virtual
-                        battlefield to reclaim his birthright. By transporting gamers into a realm of fantasy and
-                        danger, he embarks on a quest to regain what was once his.</p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_the-boss-behind-the-game&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F15117789005857405%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Fthe-boss-behind-the-game_15117789005857405"
-                        class="btn btn-primary">Read This Novel</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img class="card-img-top" src="/static/images/webnovel/gamers of underworld.png"
-                    alt="Gamers of the Underworld(Highly Recommended)">
-                <div class="card-body">
-                    <h5 class="card-title">Gamers of the Underworld(Highly Recommended)</h5>
-                    <p class="card-text">The story follows Sherlock, a new generation Dungeon Lord who
-                        aspires to become the greatest Devil King and create the most incredible Dungeon in the
-                        Underworld. To achieve his goals, he summons a group of goblins from another world who engage in
-                        commerce, fight amongst themselves, and amusingly, call themselves Gamers.
-                    </p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_reincarnated-as-the-strongest-ancestor-with-a-system&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F23327994005895805%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Freincarnated-as-the-strongest-ancestor-with-a-system_23327994005895805"
-                        class="btn btn-primary" style="color: gre;">Read This Novel</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <img class="card-img-top" src="/static/images/webnovel/ero master.jpg" alt="Ero Master">
-                <div class="card-body">
-                    <h5 class="card-title">Ero Master</h5>
-                    <p class="card-text">After getting ignored by his childhood crush all his life, Jack gets on the
-                        brink of depression.
-
-                        However, his life changes after he gets the Ero Meter which helps him get any girl with ease.
-                    </p>
-                    <a href="https://webnovel.onelink.me/qPj2?af_xp=custom&pid=CPS_Dragneel&c=CPS_Dragneelclub_ero-meter&af_dp=QDHWReader://app/open?query=%7B%22url%22%3A%22%2Fbook%2F12974322205213605%22%7D&af_prt=dragneelclub&af_web_dp=https%3A%2F%2Fwww.webnovel.com%2Fbook%2Fero-meter_12974322205213605"
-                        class="btn btn-primary">Read
-                        This Novel</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
+    }
+</script>
 {% endblock %}
